@@ -6,7 +6,7 @@ from os.path import join
 from devtools.dwarf.enums import DW_AT, DW_TAG, DW_LANG, DW_ATE
 
 
-class Attrib:
+class Attrib(object):
     def __init__(self, cu, name_id, value):
         self.dwarf = cu.dwarf
         self.cu = cu
@@ -36,10 +36,10 @@ class Attrib:
         return '%s: %s' % (self.name, self.get_value())
 
 
-class DIE:
+class DIE(object):
     def __init__(self, dwarf, cu, abbrev_dict, level):
         self.cu = cu
-        self.offset = dwarf.tell() - cu.offset
+        self.offset = dwarf.io.tell() - cu.offset
         self.attr_index = dwarf.ULEB128()
         self.tag = None
         self.attr = []
@@ -82,14 +82,14 @@ class DIE:
         return '\n'.join(map(str, [tag] + self.attr))
 
 
-class CU:
+class CU(object):
     def __init__(self, dwarf, overall_offset):
         self.dwarf = dwarf
         self.overall_offset = overall_offset
-        self.offset = dwarf.tell()
+        self.offset = dwarf.io.tell()
         
         length = dwarf.u32()
-        stop = dwarf.tell() + length
+        stop = dwarf.io.tell() + length
         
         ver = dwarf.check_version(handled=[2, 3])
         
@@ -99,14 +99,14 @@ class CU:
         abbrevs = dwarf.abbrev.get(abbrev_offset)
         self.line_offset = 0
         
-        dwarf.seek(self.offset+11)
+        dwarf.io.seek(self.offset+11)
         self.dies = []
         self.dies_dict = {}
         self.root = None
         level = 0
         die_stack = []
         current_parent = None
-        while dwarf.tell() < stop:
+        while dwarf.io.tell() < stop:
             die = DIE(dwarf, self, abbrevs, level)
             if die.tag is None:
                 level -= 1
@@ -154,10 +154,10 @@ class CU:
         return '\n' + '\n'.join(s)
 
 
-class DebugInfoLoader:
+class DebugInfoLoader(object):
     def __init__(self, dwarf):
         debug_info = dwarf.sect_dict['.debug_info']
-        dwarf.seek(debug_info.offset)
+        dwarf.io.seek(debug_info.offset)
         
         overall_offset = 0
         index = 0
@@ -169,7 +169,7 @@ class DebugInfoLoader:
             self.cus.append(cu)
             self.cus_dict[overall_offset] = cu
             self.cus_files[cu.name] = cu
-            overall_offset = dwarf.tell() - debug_info.offset
+            overall_offset = dwarf.io.tell() - debug_info.offset
             if overall_offset >= debug_info.size:
                 break
             index += 1

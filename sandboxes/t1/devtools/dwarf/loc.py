@@ -5,7 +5,7 @@ Written by Emilio Monti <emilmont@gmail.com>
 from devtools.dwarf.stream import SectionLoader
 
 
-class Location:
+class Location(object):
     def __init__(self, dwarf, begin_addr, end_addr, loc_expr):
         self.dwarf = dwarf
         self.begin_addr = begin_addr
@@ -16,7 +16,7 @@ class Location:
         return '<0x%x:0x%x> %s' % (self.begin_addr, self.end_addr, str(self.loc_expr))
 
 
-class BaseAddress:
+class BaseAddress(object):
     def __init__(self, addr):
         self.addr = addr
     

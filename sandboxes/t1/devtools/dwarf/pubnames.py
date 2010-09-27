@@ -5,7 +5,7 @@ Written by Emilio Monti <emilmont@gmail.com>
 from devtools.dwarf.stream import SectionLoader
 
 
-class PubName:
+class PubName(object):
     def __init__(self, dwarf):
         self.offset = dwarf.u32()
         if self.offset == 0:
@@ -16,17 +16,17 @@ class PubName:
         return '%4d: %s' % (self.offset, self.name)
 
 
-class PubNames:
+class PubNames(object):
     def __init__(self, dwarf, offset):
         length = dwarf.u32()
-        stop = dwarf.tell() + length
+        stop = dwarf.io.tell() + length
         dwarf.check_version()
         
         self.info_offset = dwarf.u32()
         self.info_size = dwarf.u32()
         
         self.names = {}
-        while dwarf.tell() < stop:
+        while dwarf.io.tell() < stop:
             pn = PubName(dwarf)
             if pn.offset != 0:
                 self.names[pn.name] = pn
