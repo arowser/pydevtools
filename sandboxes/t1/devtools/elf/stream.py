@@ -28,7 +28,7 @@ class ElfStream(object):
             raise ParseError("Invalid elf class")
         self.bits = bits
     
-    def set_endianness(self, endianness):
+    def set_endianness(self, endianness):       
         if endianness == ELFDATA.ELFDATA2LSB:
             self.u16 = self.ULInt16
             self.u32 = self.ULInt32

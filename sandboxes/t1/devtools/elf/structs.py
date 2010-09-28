@@ -14,8 +14,8 @@ class Header(object):
         self._elfclass = elf.u08()
         elf.set_bits(self._elfclass)
         
-        self.set_elfdata = elf.u08()
-        elf.set_endianness(self.set_elfdata)
+        self._elfdata = elf.u08()
+        elf.set_endianness(self._elfdata)
         
         self.version = elf.u08()
         elf.skip(9)
@@ -95,7 +95,6 @@ class Header(object):
         
     #use property 
     elfclass = property(get_elfclass,set_elfclass,del_elfclass,'elf class')
-    
     
     # elfdata property accessors
     def set_elfdata(self, value):
