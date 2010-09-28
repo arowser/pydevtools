@@ -208,7 +208,7 @@ DW_ATE = {
 }
 
 
-class DW_LNS:
+class DW_LNS(object):
     extended_op = 0
     copy = 1
     advance_pc = 2
@@ -221,13 +221,13 @@ class DW_LNS:
     fixed_advance_pc = 9
 
 
-class DW_LNE:
+class DW_LNE(object):
     end_sequence = 1
     set_address = 2
     define_file = 3
 
 
-class DW_OP:
+class DW_OP(object):
     addr = 0x03
     deref = 0x06
     const1u = 0x08

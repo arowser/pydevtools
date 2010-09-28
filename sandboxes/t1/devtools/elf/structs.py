@@ -22,8 +22,7 @@ class Header(object):
         
         self.type = elf.u16()
         self.machine_raw = elf.u16()
-        self._machine = None
-        self.set_machine(self.machine_raw)
+        self._machine = self.machine_raw
         self.version = elf.u32()
         self.entry = elf.u32()
         self.ph_offset = elf.u32()
@@ -36,18 +35,9 @@ class Header(object):
         self.sh_count = elf.u16()
         self.shstrndx = elf.u16()
 
-    # machine property accessors
-    def set_machine(self, value):
-        if isinstance(value, str) and value.startswith('EM_'):
-            value = getattr(MACHINE,value)
-        
-        if isinstance(value,MACHINE):
-            self._machine = value
-                        
-        if isinstance(value,int):
-            self._machine = value
-        
-    def get_machine(self):
+    # machine property ############################################
+    @property
+    def machine(self):
         #look to return an enum name ...
         en_list = [ method for method in dir(MACHINE) \
                     if isinstance(getattr(MACHINE,method), int) and 
@@ -61,24 +51,24 @@ class Header(object):
         #enum name not found return raw value
         return self._machine
     
-    def del_machine(self):
-        del self._machine
+    @machine.setter    
+    def machine(self, value):
+        if isinstance(value, str) and value.startswith('EM_'):
+            value = getattr(MACHINE,value)
         
-    #use property 
-    machine = property(get_machine,set_machine,del_machine,'machine definition')
-    
-    # elfclass property accessors
-    def set_elfclass(self, value):
-        if isinstance(value, str) and value.startswith('ELF'):
-            value = getattr(ELFCLASS,value)
-        
-        if isinstance(value,ELFCLASS):
-            self._elfclass = value
+        if isinstance(value,MACHINE):
+            self._machine = value
                         
         if isinstance(value,int):
-            self._elfclass = value
-        
-    def get_elfclass(self):
+            self._machine = value
+    
+    @machine.deleter
+    def machine(self):
+        del self._machine
+            
+    # elfclass property ############################################
+    @property 
+    def elfclass(self):
         #look to return an enum name ...
         en_list = [ method for method in dir(ELFCLASS) \
                     if isinstance(getattr(ELFCLASS,method), int) and 
@@ -89,25 +79,25 @@ class Header(object):
                 return en
         #enum name not found return raw value
         return self._elfclass
-    
-    def del_elfclass(self):
-        del self._elfclass
-        
-    #use property 
-    elfclass = property(get_elfclass,set_elfclass,del_elfclass,'elf class')
-    
-    # elfdata property accessors
-    def set_elfdata(self, value):
+    @elfclass.setter    
+    def elfclass(self, value):
         if isinstance(value, str) and value.startswith('ELF'):
-            value = getattr(ELFDATA,value)
+            value = getattr(ELFCLASS,value)
         
-        if isinstance(value,ELFDATA):
-            self._elfdata = value
+        if isinstance(value,ELFCLASS):
+            self._elfclass = value
                         
         if isinstance(value,int):
-            self._elfdata = value
+            self._elfclass = value
         
-    def get_elfdata(self):
+    @elfclass.deleter
+    def elfclass(self):
+        del self._elfclass
+    
+    
+    # elfdata property ############################################
+    @property
+    def elfdata(self):
         #look to return an enum name ...
         en_list = [ method for method in dir(ELFDATA) \
                     if isinstance(getattr(ELFDATA,method), int) and 
@@ -119,11 +109,21 @@ class Header(object):
         #enum name not found return raw value
         return self._elfdata
     
-    def del_elfdata(self):
-        del self._elfdata
+    @elfdata.setter
+    def elfdata(self, value):
+        if isinstance(value, str) and value.startswith('ELF'):
+            value = getattr(ELFDATA,value)
         
-    #use property 
-    elfdata = property(get_elfdata,set_elfdata,del_elfdata,'elf data')
+        if isinstance(value,ELFDATA):
+            self._elfdata = value
+                        
+        if isinstance(value,int):
+            self._elfdata = value
+    
+    @elfdata.deleter
+    def elfdata(self):
+        del self._elfdata
+    
     
     
 
@@ -160,15 +160,18 @@ class SectionHeader(object):
     def get_symbols(self):
         return [sym for sym in self.elf.symbols if sym.shndx == self.index]
     
-    def get_data(self):
+    # data property ############################################
+    @property 
+    def data(self):
         if self._data == None:
             curr_offset = self.elf.io.tell()
             self.elf.io.seek(self.offset, os.SEEK_SET)
             self._data = self.elf.io.read(self.size)
             self.elf.io.seek(curr_offset, os.SEEK_SET)
         return self._data
-        
-    def set_data(self, data):
+    
+    @data.setter
+    def data(self, data):
         if len(data) != len(self.__data) :
             raise ParseError('Size of new data (%d) mismatch with current '
                                 'size (%d)' % (len(data), self.size))
@@ -178,11 +181,9 @@ class SectionHeader(object):
         self.elf.io.read(self.__data)
         self.elf.io.seek(curr_offset, os.SEEK_SET)
     
-    def del_data(self):
+    @data.deleter
+    def data(self):
         del self._data
-        
-    #use property 
-    data = property(get_data,set_data,del_data,'section data')
 
 class ProgramHeader(object):
     def __init__(self, elf, index):
