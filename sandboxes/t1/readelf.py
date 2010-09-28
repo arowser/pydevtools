@@ -15,7 +15,6 @@ class ElfViewer(object):
         self.elfobj = elfobj 
     def display_elf_header(self):
         elfobj = self.elfobj
-        print ""
         print "Elf Header"
         print "Elf Class                        : %s" \
                                             % elfobj.header.elfclass
@@ -56,8 +55,8 @@ class ElfViewer(object):
             print "No Program Header"
         else :
             plural = 's' if len(elfobj.prog_headers)>1 else ' '
-            plural = "Program Header %s" % plural
-            print ""        
+            plural = "Program Header %s" % plural    
+            print plural
             print "Entry point address:             : 0x%x"\
                                                 %elfobj.header.entry
         
@@ -104,12 +103,21 @@ if __name__ == '__main__':
             elfobj = ELF(infile)
             elfviewer = ElfViewer(elfobj)
             
+            line_needed = False
+            
             if options.elfhdr is True :
                 elfviewer.display_elf_header()
+                line_needed = True
+                
             if options.phdr is True :
+                if line_needed is True : print "" 
                 elfviewer.display_program_header()
+                line_needed = True
+                
             if options.shdr is True :
+                if line_needed is True : print ""
                 elfviewer.display_section_header()
+                
                 
         except ParseError, e:
             raise AssertionError("Invalid Elf File Error: %s" % str(e))
