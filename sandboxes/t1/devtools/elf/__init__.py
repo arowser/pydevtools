@@ -43,7 +43,7 @@ class ELF(ElfStream):
         # Create a section dictionary
         self.sect_dict = {}
         for sec in self.sect_headers:
-            self.sect_dict[sec.get_name()] = sec
+            self.sect_dict[sec.name] = sec
         
         # LOAD STRING TABLE
         strtab = self.sect_dict['.strtab']

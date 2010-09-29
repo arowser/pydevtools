@@ -11,18 +11,17 @@ class Header(object):
     
     def __init__(self, elf):
         elf.constant(4, "\x7fELF")
-        self._elfclass = elf.u08()
-        elf.set_bits(self._elfclass)
+        self.elfclass = elf.u08()
+        elf.set_bits(self.elfclass)
         
-        self._elfdata = elf.u08()
-        elf.set_endianness(self._elfdata)
+        self.elfdata = elf.u08()
+        elf.set_endianness(self.elfdata)
         
         self.version = elf.u08()
         elf.skip(9)
         
         self.type = elf.u16()
-        self.machine_raw = elf.u16()
-        self._machine = self.machine_raw
+        self.machine = elf.u16()
         self.version = elf.u32()
         self.entry = elf.u32()
         self.ph_offset = elf.u32()
@@ -34,95 +33,6 @@ class Header(object):
         self.sh_entry_size = elf.u16()
         self.sh_count = elf.u16()
         self.shstrndx = elf.u16()
-
-    # machine property ############################################
-    @property
-    def machine(self):
-        #look to return an enum name ...
-        en_list = [ method for method in dir(MACHINE) \
-                    if isinstance(getattr(MACHINE,method), int) and 
-                    method.startswith('EM_')]
-        
-        #print en_list
-        
-        for en in en_list :
-            if (getattr(MACHINE,en) == int(self._machine)):
-                return en
-        #enum name not found return raw value
-        return self._machine
-    
-    @machine.setter    
-    def machine(self, value):
-        if isinstance(value, str) and value.startswith('EM_'):
-            value = getattr(MACHINE,value)
-        
-        if isinstance(value,MACHINE):
-            self._machine = value
-                        
-        if isinstance(value,int):
-            self._machine = value
-    
-    @machine.deleter
-    def machine(self):
-        del self._machine
-            
-    # elfclass property ############################################
-    @property 
-    def elfclass(self):
-        #look to return an enum name ...
-        en_list = [ method for method in dir(ELFCLASS) \
-                    if isinstance(getattr(ELFCLASS,method), int) and 
-                    method.startswith('ELF')]
-        
-        for en in en_list :
-            if (getattr(ELFCLASS,en) == int(self._elfclass)):
-                return en
-        #enum name not found return raw value
-        return self._elfclass
-    @elfclass.setter    
-    def elfclass(self, value):
-        if isinstance(value, str) and value.startswith('ELF'):
-            value = getattr(ELFCLASS,value)
-        
-        if isinstance(value,ELFCLASS):
-            self._elfclass = value
-                        
-        if isinstance(value,int):
-            self._elfclass = value
-        
-    @elfclass.deleter
-    def elfclass(self):
-        del self._elfclass
-    
-    
-    # elfdata property ############################################
-    @property
-    def elfdata(self):
-        #look to return an enum name ...
-        en_list = [ method for method in dir(ELFDATA) \
-                    if isinstance(getattr(ELFDATA,method), int) and 
-                    method.startswith('ELF')]
-        
-        for en in en_list :
-            if (getattr(ELFDATA,en) == int(self._elfdata)):
-                return en
-        #enum name not found return raw value
-        return self._elfdata
-    
-    @elfdata.setter
-    def elfdata(self, value):
-        if isinstance(value, str) and value.startswith('ELF'):
-            value = getattr(ELFDATA,value)
-        
-        if isinstance(value,ELFDATA):
-            self._elfdata = value
-                        
-        if isinstance(value,int):
-            self._elfdata = value
-    
-    @elfdata.deleter
-    def elfdata(self):
-        del self._elfdata
     
     
     
@@ -143,7 +53,7 @@ class SectionHeader(object):
         self.addralign = elf.u32()
         self.entsize = elf.u32()
         
-        self.name = None
+        self._name = None
         self._data = None
         
     def is_loadable(self):
@@ -151,13 +61,21 @@ class SectionHeader(object):
     
     def is_execinstr(self):
         return self.flags & SHF.EXECINSTR == SHF.EXECINSTR
-    
-    def get_name(self):
-        if self.name == None:
-            self.name = self.elf.shstrtab[self.name_index]
-        return self.name
-    
-    def get_symbols(self):
+     
+    # name property ############################################
+    @property
+    def name(self):
+        if self._name == None:
+            self._name = self.elf.shstrtab[self.name_index]
+        return self._name
+        
+    @name.setter
+    def name(self,value):
+        pass
+
+    # symbols property ############################################
+    @property
+    def symbols(self):
         return [sym for sym in self.elf.symbols if sym.shndx == self.index]
     
     # data property ############################################
@@ -180,10 +98,6 @@ class SectionHeader(object):
         self.elf.io.seek(self.offset, os.SEEK_SET)
         self.elf.io.read(self.__data)
         self.elf.io.seek(curr_offset, os.SEEK_SET)
-    
-    @data.deleter
-    def data(self):
-        del self._data
 
 class ProgramHeader(object):
     def __init__(self, elf, index):
@@ -214,12 +128,18 @@ class Symbol(object):
         self.other = elf.u08()
         self.shndx = elf.u16()
         
-        self.name = None
-    
-    def get_name(self):
-        if self.name is None:
-            self.name = self.elf.strtab[self.name_index]
-        return self.name
+        self._name = None
+        
+    # name property ############################################
+    @property
+    def name(self):
+        if self._name == None:
+            self._name = self.elf.shstrtab[self.name_index]
+        return self._name
+        
+    @name.setter
+    def name(self,value):
+        pass
     
     def get_bind(self):
         return self.info >> 4

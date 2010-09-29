@@ -17,9 +17,9 @@ class ElfViewer(object):
         elfobj = self.elfobj
         print "Elf Header"
         print "Elf Class                        : %s" \
-                                            % elfobj.header.elfclass
+                                            % ELFCLASS[elfobj.header.elfclass]
         print "Elf Data                         : %s" \
-                                            % elfobj.header.elfdata
+                                            % ELFDATA[elfobj.header.elfdata]
         print "Elf Version                      : %d, 0x%x" \
                 % (elfobj.header.version,elfobj.header.version)
         #OS/ABI
@@ -27,7 +27,7 @@ class ElfViewer(object):
         print "Type                             : %d, 0x%x" \
                         % (elfobj.header.type,elfobj.header.type)
         print "Machine                          : %s" \
-                        % elfobj.header.machine
+                        % MACHINE[elfobj.header.machine]
         print "Entry point address:             : %d, 0x%x"\
                         % (elfobj.header.entry,elfobj.header.entry)
         print "Start of program headers (offset): %d, 0x%x bytes" \
@@ -55,7 +55,7 @@ class ElfViewer(object):
             print "No Program Header"
         else :
             plural = 's' if len(elfobj.prog_headers)>1 else ' '
-            plural = "Program Header %s" % plural    
+            plural = "Program Header%s" % plural    
             print plural
             print "Entry point address:             : 0x%x"\
                                                 %elfobj.header.entry
@@ -71,8 +71,31 @@ class ElfViewer(object):
                     (phr.type, phr.offset, phr.vaddr, phr.paddr, 
                      phr.filesz, phr.memsz, phr.flags, phr.align)
 
-        def display_program_header(self):
-            pass
+    def display_section_header(self):
+        pass
+        elfobj = self.elfobj
+        if len(elfobj.sect_headers)<=0 :
+            print "No Sections Header"
+        else :
+            plural = 's' if len(elfobj.sect_headers)>1 else ' '
+            plural = "Section Header%s" % plural    
+            print plural
+            print "Nr Name type Addr Off Size ES flg Lk Inf Align"
+        
+            strfmt = "0x%x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%x 0x%08x"\
+                     "0x%x 0x%08x 0x%08x"
+        
+            for shr in elfobj.section_headers :    
+                  print strfmt % \
+                    (phr.type, phr.offset, phr.vaddr, phr.paddr, 
+                     phr.filesz, phr.memsz, phr.flags, phr.align)
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
     try:
@@ -98,9 +121,12 @@ if __name__ == '__main__':
         except IOError, e:
             raise AssertionError('Ivalid input file: %s' % str(e))
         
-        #build ELF object from infile
+        
         try :
+            #build ELF object from infile
             elfobj = ELF(infile)
+            
+            #build ELF Viewer from elfobj
             elfviewer = ElfViewer(elfobj)
             
             line_needed = False

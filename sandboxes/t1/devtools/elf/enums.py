@@ -2,15 +2,19 @@
 Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
-class ELFCLASS(object):
-    ELFCLASSNONE =0
-    ELFCLASS32 = 1
-    ELFCLASS64 = 2
+from devtools.utils import Enum
 
-class ELFDATA(object):
-    ELFDATANONE = 0
-    ELFDATA2LSB = 1
-    ELFDATA2MSB = 2
+ELFCLASS = Enum({
+    0x00: 'ELFCLASSNONE',
+    0x01: 'ELFCLASS32',
+    0x02: 'ELFCLASS64',
+})
+
+ELFDATA = Enum({
+    0x00: 'ELFDATANONE',
+    0x01: 'ELFDATA2LSB',
+    0x02: 'ELFDATA2MSB',
+})
 
 class STT(object):
     NOTYPE = 0
@@ -55,160 +59,149 @@ class SHF(object):
     EXECINSTR = 0x4
     MASKPROC = 0xf0000000
 
-class MACHINE(object):
-#   Name	            Value	Meaning
-    EM_NONE	            = 0	    # No machine
-    EM_M32	            = 1	    # AT&T WE 32100
-    EM_SPARC	        = 2	    # SPARC
-    EM_386	            = 3     # Intel 80386
-    EM_68K              = 4	    # Motorola 68000
-    EM_88K	            = 5	    # Motorola 88000
-    EM_486	            = 6	    # Reserved for future use (was EM_486)
-    EM_860	            = 7	    # Intel 80860
-    EM_MIPS	            = 8	    # MIPS I Architecture
-    EM_S370	            = 9	    # IBM System/370 Processor
-    EM_MIPS_RS3_LE	    = 10	# MIPS RS3000 Little-endian
-    EM_RESERVED1	    = 11    # Reserved for future used
-    EM_RESERVED2	    = 12    # Reserved for future used
-    EM_RESERVED3	    = 13    # Reserved for future used
-    EM_RESERVED4	    = 14    # Reserved for future used                     
-    EM_PARISC	        = 15	#Hewlett-Packard PA-RISC
-    EM_RESERVED5	    = 16	#Reserved for future use
-    EM_VPP500	        = 17	#Fujitsu VPP500
-    EM_SPARC32PLUS	    = 18	#Enhanced instruction set SPARC
-    EM_960	            = 19	#Intel 80960
-    EM_PPC	            = 20	#PowerPC
-    EM_PPC64	        = 21	#64-bit PowerPC
-    EM_S390	            = 22	#IBM System/390 Processor
-    EM_SPU	            = 23	#IBM SPU/SPC
-    #reserved	        = 24-35	#Reserved for future use
-    EM_V800	            = 36	#NEC V800
-    EM_FR20	            = 37	#Fujitsu FR20
-    EM_RH32	            = 38	#TRW RH-32
-    EM_RCE	            = 39	#Motorola RCE
-    EM_ARM	            = 40	#Advanced RISC Machines ARM
-    EM_ALPHA	        = 41	#Digital Alpha
-    EM_SH	            = 42	#Hitachi SH
-    EM_SPARCV9	        = 43	#SPARC Version 9
-    EM_TRICORE	        = 44	#Siemens TriCore embedded processor
-    EM_ARC	            = 45	#Argonaut RISC Core, Argonaut Technologies Inc.
-    EM_H8_300	        = 46	#Hitachi H8/300
-    EM_H8_300H	        = 47	#Hitachi H8/300H
-    EM_H8S	            = 48	#Hitachi H8S
-    EM_H8_500	        = 49	#Hitachi H8/500
-    EM_IA_64	        = 50	#Intel IA-64 processor architecture
-    EM_MIPS_X	        = 51	#Stanford MIPS-X
-    EM_COLDFIRE	        = 52	#Motorola ColdFire
-    EM_68HC12	        = 53	#Motorola M68HC12
-    EM_MMA	            = 54	#Fujitsu MMA Multimedia Accelerator
-    EM_PCP	            = 55	#Siemens PCP
-    EM_NCPU	            = 56	#Sony nCPU embedded RISC processor
-    EM_NDR1	            = 57	#Denso NDR1 microprocessor
-    EM_STARCORE	        = 58	#Motorola Star*Core processor
-    EM_ME16	            = 59	#Toyota ME16 processor
-    EM_ST100	        = 60	#STMicroelectronics ST100 processor
-    EM_TINYJ	        = 61	#Advanced Logic Corp. TinyJ embedded processor family
-    EM_X86_64	        = 62	#AMD x86-64 architecture
-    EM_PDSP	            = 63	#Sony DSP Processor
-    EM_PDP10	        = 64	#Digital Equipment Corp. PDP-10
-    EM_PDP11	        = 65	#Digital Equipment Corp. PDP-11
-    EM_FX66	            = 66	#Siemens FX66 microcontroller
-    EM_ST9PLUS	        = 67	#STMicroelectronics ST9+ 8/16 bit microcontroller
-    EM_ST7	            = 68	#STMicroelectronics ST7 8-bit microcontroller
-    EM_68HC16	        = 69	#Motorola MC68HC16 Microcontroller
-    EM_68HC11	        = 70	#Motorola MC68HC11 Microcontroller
-    EM_68HC08	        = 71	#Motorola MC68HC08 Microcontroller
-    EM_68HC05	        = 72	#Motorola MC68HC05 Microcontroller
-    EM_SVX	            = 73	#Silicon Graphics SVx
-    EM_ST19	            = 74	#STMicroelectronics ST19 8-bit microcontroller
-    EM_VAX	            = 75	#Digital VAX
-    EM_CRIS	            = 76	#Axis Communications 32-bit embedded processor
-    EM_JAVELIN	        = 77	#Infineon Technologies 32-bit embedded processor
-    EM_FIREPATH	        = 78	#Element 14 64-bit DSP Processor
-    EM_ZSP              = 79	#LSI Logic 16-bit DSP Processor
-    EM_MMIX             = 80	#Donald Knuth's educational 64-bit processor
-    EM_HUANY	        = 81	#Harvard University machine-independent object files
-    EM_PRISM	        = 82	#SiTera Prism
-    EM_AVR	            = 83	#Atmel AVR 8-bit microcontroller
-    EM_FR30	            = 84	#Fujitsu FR30
-    EM_D10V	            = 85	#Mitsubishi D10V
-    EM_D30V	            = 86	#Mitsubishi D30V
-    EM_V850	            = 87	#NEC v850
-    EM_M32R	            = 88	#Mitsubishi M32R
-    EM_MN10300	        = 89	#Matsushita MN10300
-    EM_MN10200	        = 90	#Matsushita MN10200
-    EM_PJ	            = 91	#picoJava
-    EM_OPENRISC	        = 92	#OpenRISC 32-bit embedded processor
-    EM_ARC_COMPACT	    = 93	#ARC International ARCompact processor (old spelling/synonym: EM_ARC_A5)
-    EM_XTENSA	        = 94	#Tensilica Xtensa Architecture
-    EM_VIDEOCORE	    = 95	#Alphamosaic VideoCore processor
-    EM_TMM_GPP	        = 96	#Thompson Multimedia General Purpose Processor
-    EM_NS32K	        = 97	#National Semiconductor 32000 series
-    EM_TPC	            = 98	#Tenor Network TPC processor
-    EM_SNP1K	        = 99	#Trebia SNP 1000 processor
-    EM_ST200	        = 100	#STMicroelectronics (www.st.com) ST200 microcontroller
-    EM_IP2K	            = 101	#Ubicom IP2xxx microcontroller family
-    EM_MAX	            = 102	#MAX Processor
-    EM_CR	            = 103	#National Semiconductor CompactRISC microprocessor
-    EM_F2MC16	        = 104	#Fujitsu F2MC16
-    EM_MSP430	        = 105	#Texas Instruments embedded microcontroller msp430
-    EM_BLACKFIN	        = 106	#Analog Devices Blackfin (DSP) processor
-    EM_SE_C33	        = 107	#S1C33 Family of Seiko Epson processors
-    EM_SEP	            = 108	#Sharp embedded microprocessor
-    EM_ARCA	            = 109	#Arca RISC Microprocessor
-    EM_UNICORE	        = 110	#Microprocessor series from PKU-Unity Ltd. and MPRC of Peking University
-    EM_EXCESS	        = 111	#eXcess: 16/32/64-bit configurable embedded CPU
-    EM_DXP	            = 112	#Icera Semiconductor Inc. Deep Execution Processor
-    EM_ALTERA_NIOS2	    = 113	#Altera Nios II soft-core processor
-    EM_CRX	            = 114	#National Semiconductor CompactRISC CRX microprocessor
-    EM_XGATE	        = 115	#Motorola XGATE embedded processor
-    EM_C166	            = 116	#Infineon C16x/XC16x processor
-    EM_M16C	            = 117	#Renesas M16C series microprocessors
-    EM_DSPIC30F	        = 118	#Microchip Technology dsPIC30F Digital Signal Controller
-    EM_CE	            = 119	#Freescale Communication Engine RISC core
-    EM_M32C	            = 120	#Renesas M32C series microprocessors
-    #reserved	        = 121-13#0	Reserved for future use
-    EM_TSK3000	        = 131	#Altium TSK3000 core
-    EM_RS08	            = 132	#Freescale RS08 embedded processor
-    reserved	        = 133	#Reserved for future Analog Devices DSP microprocessor
-    EM_ECOG2	        = 134	#Cyan Technology eCOG2 microprocessor
-    EM_SCORE7	        = 135	#Sunplus S+core7 RISC processor
-    EM_DSP24	        = 136	#New Japan Radio (NJR) 24-bit DSP Processor
-    EM_VIDEOCORE3	    = 137	#Broadcom VideoCore III processor
-    EM_LATTICEMICO32    = 138	#RISC processor for Lattice FPGA architecture
-    EM_SE_C17	        = 139	#Seiko Epson C17 family
-    EM_TI_C6000	        = 140	#The Texas Instruments TMS320C6000 DSP family
-    EM_TI_C2000	        = 141	#The Texas Instruments TMS320C2000 DSP family
-    EM_TI_C5500	        = 142	#The Texas Instruments TMS320C55x DSP family
-    #reserved	        = 143-159	Reserved for future use
-    EM_MMDSP_PLUS	    = 160	#STMicroelectronics 64bit VLIW Data Signal Processor
-    EM_CYPRESS_M8C	    = 161	#Cypress M8C microprocessor
-    EM_R32C	            = 162	#Renesas R32C series microprocessors
-    EM_TRIMEDIA	        = 163	#NXP Semiconductors TriMedia architecture family
-    EM_QDSP6	        = 164	#QUALCOMM DSP6 Processor
-    EM_8051	            = 165	#Intel 8051 and variants
-    EM_STXP7X	        = 166	#STMicroelectronics STxP7x family of configurable and extensible RISC processors
-    EM_NDS32	        = 167	#Andes Technology compact code size embedded RISC processor family
-    EM_ECOG1	        = 168	#Cyan Technology eCOG1X family
-    EM_ECOG1X	        = 168	#Cyan Technology eCOG1X family
-    EM_MAXQ30	        = 169	#Dallas Semiconductor MAXQ30 Core Micro-controllers
-    EM_XIMO16	        = 170	#New Japan Radio (NJR) 16-bit DSP Processor
-    EM_MANIK	        = 171	#M2000 Reconfigurable RISC Microprocessor
-    EM_CRAYNV2	        = 172	#Cray Inc. NV2 vector architecture
-    EM_RX	            = 173	#Renesas RX family
-    EM_METAG	        = 174	#Imagination Technologies META processor architecture
-    EM_MCST_ELBRUS	    = 175	#MCST Elbrus general purpose hardware architecture
-    EM_ECOG16	        = 176	#Cyan Technology eCOG16 family
-    EM_CR16	            = 177	#National Semiconductor CompactRISC CR16 16-bit microprocessor
-    EM_ETPU	            = 178	#Freescale Extended Time Processing Unit
-    EM_SLE9X	        = 179	#Infineon Technologies SLE9X core
-    #reserved	        = 180-182	Reserved for future Intel use
-    #reserved	        = 183-184	Reserved for future ARM use
-    EM_AVR32	        = 185	#Atmel Corporation 32-bit microprocessor family
-    EM_STM8	            = 186	#STMicroeletronics STM8 8-bit microcontroller
-    EM_TILE64	        = 187	#Tilera TILE64 multicore architecture family
-    EM_TILEPRO	        = 188	#Tilera TILEPro multicore architecture family
-    EM_MICROBLAZE	    = 189	#Xilinx MicroBlaze 32-bit RISC soft processor core
-    EM_CUDA	            = 190	#NVIDIA CUDA architecture
-    EM_TILEGX	        = 191	#Tilera TILE-Gx multicore architecture family
-    EM_CLOUDSHIELD	    = 192	#CloudShield architecture family
+MACHINE = Enum({
+    0	 : 'EM_NONE',          # No machine
+    1	 : 'EM_M32',           # AT&T WE 32100
+    2	 : 'EM_SPARC',         # SPARC
+    3    : 'EM_386',           # Intel 80386
+    4	 : 'EM_68K',           # Motorola 68000
+    5	 : 'EM_88K',           # Motorola 88000
+    6	 : 'EM_486',           # Reserved for future use (was EM_486)
+    7	 : 'EM_860',           # Intel 80860
+    8	 : 'EM_MIPS',          # MIPS I Architecture
+    9	 : 'EM_S370',          # IBM System/370 Processor
+    10   : 'EM_MIPS_RS3_LE',   # MIPS RS3000 Little-endian
+    15   : 'EM_PARISC',        # Hewlett-Packard PA-RISC
+    17   : 'EM_VPP500',        # Fujitsu VPP500
+    18   : 'EM_SPARC32PLUS',   # Enhanced instruction set SPARC
+    19   : 'EM_960',           # Intel 80960
+    20   : 'EM_PPC',           # PowerPC
+    21   : 'EM_PPC64',         # 64-bit PowerPC
+    22   : 'EM_S390',          # IBM System/390 Processor
+    23   : 'EM_SPU',           # IBM SPU/SPC
+    36   : 'EM_V800',          # NEC V800
+    37   : 'EM_FR20',          # Fujitsu FR20
+    38   : 'EM_RH32',          # TRW RH-32
+    39   : 'EM_RCE',           # Motorola RCE
+    40   : 'EM_ARM',           # Advanced RISC Machines ARM
+    41   : 'EM_ALPHA',         # Digital Alpha
+    42   : 'EM_SH',            # Hitachi SH
+    43   : 'EM_SPARCV9',       # SPARC Version 9
+    44   : 'EM_TRICORE',       # Siemens TriCore embedded processor
+    45   : 'EM_ARC',           # Argonaut RISC Core, Argonaut Technologies Inc.
+    46   : 'EM_H8_300',        # Hitachi H8/300
+    47   : 'EM_H8_300H',       # Hitachi H8/300H
+    48   : 'EM_H8S',           # Hitachi H8S
+    49   : 'EM_H8_500',        # Hitachi H8/500
+    50   : 'EM_IA_64',         # Intel IA-64 processor architecture
+    51   : 'EM_MIPS_X',        # Stanford MIPS-X
+    52   : 'EM_COLDFIRE',      # Motorola ColdFire
+    53   : 'EM_68HC12',        # Motorola M68HC12
+    54   : 'EM_MMA',           # Fujitsu MMA Multimedia Accelerator
+    55   : 'EM_PCP',           # Siemens PCP
+    56   : 'EM_NCPU',          # Sony nCPU embedded RISC processor
+    57   : 'EM_NDR1',          # Denso NDR1 microprocessor
+    58   : 'EM_STARCORE',      # Motorola Star*Core processor
+    59   : 'EM_ME16',          # Toyota ME16 processor
+    60   : 'EM_ST100',         # STMicroelectronics ST100 processor
+    61   : 'EM_TINYJ',         # Advanced Logic Corp. TinyJ embedded processor family
+    62   : 'EM_X86_64',        # AMD x86-64 architecture
+    63   : 'EM_PDSP',          # Sony DSP Processor
+    64   : 'EM_PDP10',         # Digital Equipment Corp. PDP-10
+    65   : 'EM_PDP11',         # Digital Equipment Corp. PDP-11
+    66   : 'EM_FX66',          # Siemens FX66 microcontroller
+    67   : 'EM_ST9PLUS',       # STMicroelectronics ST9+ 8/16 bit microcontroller
+    68   : 'EM_ST7',           # STMicroelectronics ST7 8-bit microcontroller
+    69   : 'EM_68HC16',        # Motorola MC68HC16 Microcontroller
+    70   : 'EM_68HC11',        # Motorola MC68HC11 Microcontroller
+    71   : 'EM_68HC08',        # Motorola MC68HC08 Microcontroller
+    72   : 'EM_68HC05',        # Motorola MC68HC05 Microcontroller
+    73   : 'EM_SVX',           # Silicon Graphics SVx
+    74   : 'EM_ST19',          # STMicroelectronics ST19 8-bit microcontroller
+    75   : 'EM_VAX',           # Digital VAX
+    76   : 'EM_CRIS',          # Axis Communications 32-bit embedded processor
+    77   : 'EM_JAVELIN',       # Infineon Technologies 32-bit embedded processor
+    78   : 'EM_FIREPATH',      # Element 14 64-bit DSP Processor
+    79   : 'EM_ZSP',           # LSI Logic 16-bit DSP Processor
+    80   : 'EM_MMIX',          # Donald Knuth's educational 64-bit processor
+    81   : 'EM_HUANY',         # Harvard University machine-independent object files
+    82   : 'EM_PRISM',         # SiTera Prism
+    83   : 'EM_AVR',           # Atmel AVR 8-bit microcontroller
+    84   : 'EM_FR30',          # Fujitsu FR30
+    85   : 'EM_D10V',          # Mitsubishi D10V
+    86   : 'EM_D30V',          # Mitsubishi D30V
+    87   : 'EM_V850',          # NEC v850
+    88   : 'EM_M32R',          # Mitsubishi M32R
+    89   : 'EM_MN10300',       # Matsushita MN10300
+    90   : 'EM_MN10200',       # Matsushita MN10200
+    91   : 'EM_PJ',            # picoJava
+    92   : 'EM_OPENRISC',      # OpenRISC 32-bit embedded processor
+    93   : 'EM_ARC_COMPACT',   # ARC International ARCompact processor (old spelling/synonym: EM_ARC_A5)
+    94   : 'EM_XTENSA',        # Tensilica Xtensa Architecture
+    95   : 'EM_VIDEOCORE',     # Alphamosaic VideoCore processor
+    96   : 'EM_TMM_GPP',       # Thompson Multimedia General Purpose Processor
+    97   : 'EM_NS32K',         # National Semiconductor 32000 series
+    98   : 'EM_TPC',           # Tenor Network TPC processor
+    99   : 'EM_SNP1K',         # Trebia SNP 1000 processor
+    100  : 'EM_ST200',         # STMicroelectronics (www.st.com) ST200 microcontroller
+    101  : 'EM_IP2K',          # Ubicom IP2xxx microcontroller family
+    102  : 'EM_MAX',           # MAX Processor
+    103  : 'EM_CR',            # National Semiconductor CompactRISC microprocessor
+    104  : 'EM_F2MC16',        # Fujitsu F2MC16
+    105  : 'EM_MSP430',        # Texas Instruments embedded microcontroller msp430
+    106  : 'EM_BLACKFIN',      # Analog Devices Blackfin (DSP) processor
+    107  : 'EM_SE_C33',        # S1C33 Family of Seiko Epson processors
+    108  : 'EM_SEP',           # Sharp embedded microprocessor
+    109  : 'EM_ARCA',          # Arca RISC Microprocessor
+    110  : 'EM_UNICORE',       # Microprocessor series from PKU-Unity Ltd. and MPRC of Peking University
+    111  : 'EM_EXCESS',        # eXcess: 16/32/64-bit configurable embedded CPU
+    112  : 'EM_DXP',           # Icera Semiconductor Inc. Deep Execution Processor
+    113  : 'EM_ALTERA_NIOS2',  # Altera Nios II soft-core processor
+    114  : 'EM_CRX',           # National Semiconductor CompactRISC CRX microprocessor
+    115  : 'EM_XGATE',         # Motorola XGATE embedded processor
+    116  : 'EM_C166',          # Infineon C16x/XC16x processor
+    117  : 'EM_M16C',          # Renesas M16C series microprocessors
+    118  : 'EM_DSPIC30F',      # Microchip Technology dsPIC30F Digital Signal Controller
+    119  : 'EM_CE',            # Freescale Communication Engine RISC core
+    120  : 'EM_M32C',          # Renesas M32C series microprocessors
+    131  : 'EM_TSK3000',       # Altium TSK3000 core
+    132  : 'EM_RS08',          # Freescale RS08 embedded processor
+    134  : 'EM_ECOG2',         # Cyan Technology eCOG2 microprocessor
+    135  : 'EM_SCORE7',        # Sunplus S+core7 RISC processor
+    136  : 'EM_DSP24',         # New Japan Radio (NJR) 24-bit DSP Processor
+    137  : 'EM_VIDEOCORE3',    # Broadcom VideoCore III processor
+    138  : 'EM_LATTICEMICO32', # RISC processor for Lattice FPGA architecture
+    139  : 'EM_SE_C17',        # Seiko Epson C17 family
+    140  : 'EM_TI_C6000',      # The Texas Instruments TMS320C6000 DSP family
+    141  : 'EM_TI_C2000',      # The Texas Instruments TMS320C2000 DSP family
+    142  : 'EM_TI_C5500',      # The Texas Instruments TMS320C55x DSP family
+    160  : 'EM_MMDSP_PLUS',    # STMicroelectronics 64bit VLIW Data Signal Processor
+    161  : 'EM_CYPRESS_M8C',   # Cypress M8C microprocessor
+    162  : 'EM_R32C',          # Renesas R32C series microprocessors
+    163  : 'EM_TRIMEDIA',      # NXP Semiconductors TriMedia architecture family
+    164  : 'EM_QDSP6',         # QUALCOMM DSP6 Processor
+    165  : 'EM_8051',          # Intel 8051 and variants
+    166  : 'EM_STXP7X',        # STMicroelectronics STxP7x family of configurable and extensible RISC processors
+    167  : 'EM_NDS32',         # Andes Technology compact code size embedded RISC processor family
+    168  : 'EM_ECOG1',         # Cyan Technology eCOG1X family
+    168  : 'EM_ECOG1X',        # Cyan Technology eCOG1X family
+    169  : 'EM_MAXQ30',        # Dallas Semiconductor MAXQ30 Core Micro-controllers
+    170  : 'EM_XIMO16',        # New Japan Radio (NJR) 16-bit DSP Processor
+    171  : 'EM_MANIK',         # M2000 Reconfigurable RISC Microprocessor
+    172  : 'EM_CRAYNV2',       # Cray Inc. NV2 vector architecture
+    173  : 'EM_RX',            # Renesas RX family
+    174  : 'EM_METAG',         # Imagination Technologies META processor architecture
+    175  : 'EM_MCST_ELBRUS',   # MCST Elbrus general purpose hardware architecture
+    176  : 'EM_ECOG16',        # Cyan Technology eCOG16 family
+    177  : 'EM_CR16',          # National Semiconductor CompactRISC CR16 16-bit microprocessor
+    178  : 'EM_ETPU',          # Freescale Extended Time Processing Unit
+    179  : 'EM_SLE9X',         # Infineon Technologies SLE9X core
+    185  : 'EM_AVR32',         # Atmel Corporation 32-bit microprocessor family
+    186  : 'EM_STM8',          # STMicroeletronics STM8 8-bit microcontroller
+    187  : 'EM_TILE64',        # Tilera TILE64 multicore architecture family
+    188  : 'EM_TILEPRO',       # Tilera TILEPro multicore architecture family
+    189  : 'EM_MICROBLAZE',    # Xilinx MicroBlaze 32-bit RISC soft processor core
+    190  : 'EM_CUDA',          # NVIDIA CUDA architecture
+    191  : 'EM_TILEGX',        # Tilera TILE-Gx multicore architecture family
+    192  : 'EM_CLOUDSHIELD',   # CloudShield architecture family
+})                   
