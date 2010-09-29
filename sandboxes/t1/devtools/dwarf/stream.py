@@ -4,6 +4,7 @@ Written by Emilio Monti <emilmont@gmail.com>
 """
 from StringIO import StringIO
 from devtools.elf.stream import ElfStream
+from devtools.elf.enums import ELFCLASS, ELFDATA
 from devtools.elf.exception import *
 
 from devtools.dwarf.enums import DW_FORM
@@ -23,9 +24,9 @@ class DwarfStream(object):
             self.read_addr = self.u32
             self.max_addr = 0xFFFFFFFF
         
-        if self.bits == ElfStream.BITS_32:
+        if self.bits == ELFCLASS.ELFCLASS32:
             self.CIE_ID = 0xFFFFFFFF
-        elif self.bits == ElfStream.BITS_64:
+        elif self.bits == ELFCLASS.ELFCLASS64:
             self.CIE_ID = 0xFFFFFFFFFFFFFFFF
         
         # Read methods aliases
@@ -196,7 +197,7 @@ class SectionCache(object):
 
 
 class DwarfString(DwarfStream, ElfStream, StringIO):
-    def __init__(self, buffer, bits=ElfStream.BITS_32, endianness=ElfStream.LITTLE_ENDIAN, addr_size=4):
+    def __init__(self, buffer, bits=ELFCLASS.ELFCLASS32, endianness=ELFDATA.ELFDATA2LSB, addr_size=4):
         StringIO.__init__(self, buffer)
         self.set_bits(bits)
         self.set_endianness(endianness)
@@ -204,7 +205,7 @@ class DwarfString(DwarfStream, ElfStream, StringIO):
 
 
 class DwarfList(DwarfString):
-    def __init__(self, list, bits=ElfStream.BITS_32, endianness=ElfStream.LITTLE_ENDIAN, addr_size=4):
+    def __init__(self, list, bits=ELFCLASS.ELFCLASS32, endianness=ELFDATA.ELFDATA2LSB, addr_size=4):
         buffer = ''.join(map(chr, list))
         DwarfString.__init__(self, buffer, bits, endianness, addr_size)
 

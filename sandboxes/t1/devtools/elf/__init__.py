@@ -57,24 +57,25 @@ class ELF(ElfStream):
     def __del__(self):
         if not self.iobj.closed :
             self.iobj.close()
-
-def get_elf_from_file(path):
-    return ELF(path)
     
+    @staticmethod
+    def get_from_file(path):
+        return ELF(path)
     
-def get_elf_from_file_memory_duplicate(path):
-    io = FileIO(path,'rb')
-    io2 = StringIO()
-    io2.write(io.read())
-    io.close()
-    io2.seek(0, os.SEEK_SET)
-    return ELF(io2)
+    @staticmethod
+    def get_from_file_memory_duplicate(path):
+        io = FileIO(path,'rb')
+        io2 = StringIO()
+        io2.write(io.read())
+        io.close()
+        io2.seek(0, os.SEEK_SET)
+        return ELF(io2)
     
-def get_elf_from_memory_duplicate(path):
-    io = FileIO(path,'rb')
-    io2 = StringIO()
-    io2.write(io.read())
-    io.close()
-    io2.seek(0, os.SEEK_SET)
-    return ELF(io2)
+    @staticmethod
+    def get_from_memory(bytes):
+        io2 = StringIO(bytes)
+        io2.write(io.read())
+        io.close()
+        io2.seek(0, os.SEEK_SET)
+        return ELF(io2)
     

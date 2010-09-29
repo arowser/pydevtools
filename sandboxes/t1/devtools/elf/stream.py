@@ -10,9 +10,7 @@ from devtools.elf.exception import *
 from devtools.elf.enums import ELFCLASS, ELFDATA
 
 class ElfStream(object):
-    BITS_32, BITS_64 = 1, 2
-    LITTLE_ENDIAN, BIG_ENDIAN = 1, 2
-    
+
     def __init__(self, ioboj):
         self.io = ioboj
 
