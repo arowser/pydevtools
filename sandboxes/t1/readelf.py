@@ -4,11 +4,16 @@
 #--------------------------------------------------------------
 
 import StringIO
+import string
 import os
 import struct
 import sys
 from optparse import OptionParser
 from devtools.elf import *
+
+def transposed(lists, defval=0):
+   if not lists: return []
+   return map(lambda *row: [elem or defval for elem in row], *lists)
 
 class ElfViewer(object):
     def __init__(self, elfobj):
@@ -21,9 +26,9 @@ class ElfViewer(object):
         print "Elf Data                         : %s" \
                                             % ELFDATA[elfobj.header.elfdata]
         print "Elf Version                      : %d, 0x%x" \
-                % (elfobj.header.version,elfobj.header.version)
-        #OS/ABI
-        #ABI Version
+                % (elfobj.header.version,elfobj.header.version)        
+        #OS/ABI to implement ...
+        #ABI Version to implment ...
         print "Type                             : %d, 0x%x" \
                         % (elfobj.header.type,elfobj.header.type)
         print "Machine                          : %s" \
@@ -48,7 +53,47 @@ class ElfViewer(object):
                     % (elfobj.header.sh_count,elfobj.header.sh_count)
         print "Section header string table index: %d, 0x%x" \
                     % (elfobj.header.shstrndx,elfobj.header.shstrndx)    
-
+    
+    @staticmethod
+    def display_iter_obj_formatted(tbl_config,iterobj):
+        
+        titles = [title[0] for title in tbl_config]
+        records = []
+        records.append(titles)
+        for obj in iterobj :
+            str_fields = []
+            for fld in tbl_config :
+                str_fields.append( fld[1] % getattr(obj, fld[2]))
+            records.append(str_fields)
+       
+        #transpose lines to cols
+        records = transposed(records)
+        
+        #create a table of normalised value        
+        norm_records = []
+        for col in records :
+            max_len = 0
+            for str_val in col:
+                if type(str_val) == type('') and len(str_val) >= max_len:
+                    max_len = len(str_val)
+                    
+            #max_len = max( len(str_val) for str_val in col)
+            norm_fields = []
+            for str_val in col :
+                if (type(str_val) != type('')) :
+                    str_val = ''
+                norm_fields.append( string.ljust(str_val,max_len, ' '))
+                
+            norm_records.append(norm_fields)
+        
+        #transpose cols to lines
+        norm_records = transposed(norm_records)
+        
+        #print lines
+        for ln in norm_records :
+            print "".join("%s " % v for v in ln)
+        
+        
     def display_program_header(self):
         elfobj = self.elfobj
         if len(elfobj.prog_headers)<=0 :
@@ -59,20 +104,22 @@ class ElfViewer(object):
             print plural
             print "Entry point address:             : 0x%x"\
                                                 %elfobj.header.entry
-        
-            print "Type Offset VirtAddr PhysAddr "\
-                    "FileSiz MemSiz Flg Align"
-        
-            strfmt = "0x%x  0x%08x     0x%08x       0x%08x"\
-                         " 0x%08x    0x%08x    0x%x  0x%08x"
-        
-            for phr in elfobj.prog_headers :    
-                  print strfmt % \
-                    (phr.type, phr.offset, phr.vaddr, phr.paddr, 
-                     phr.filesz, phr.memsz, phr.flags, phr.align)
+
+            tbl =   [ 
+                    # name       #fmt     #field name
+                    ['Type',    '0x%x'  , 'type'], 
+                    ['Offset',  '0x%08x', 'offset'],
+                    ['VirtAddr','0x%08x', 'vaddr'],
+                    ['PhysAddr','0x%08x', 'paddr'],
+                    ['FileSiz', '0x%08x', 'filesz'],
+                    ['MemSiz',  '0x%08x', 'memsz'],
+                    ['Flg',     '0x%08x', 'flags'],
+                    ['Align',   '0x%08x', 'align'],
+                    ]
+
+            self.display_iter_obj_formatted(tbl,elfobj.prog_headers)
 
     def display_section_header(self):
-        pass
         elfobj = self.elfobj
         if len(elfobj.sect_headers)<=0 :
             print "No Sections Header"
@@ -80,21 +127,23 @@ class ElfViewer(object):
             plural = 's' if len(elfobj.sect_headers)>1 else ' '
             plural = "Section Header%s" % plural    
             print plural
-            print "Nr Name type Addr Off Size ES flg Lk Inf Align"
-        
-            strfmt = "0x%x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%x 0x%08x"\
-                     "0x%x 0x%08x 0x%08x"
-        
-            for shr in elfobj.section_headers :    
-                  print strfmt % \
-                    (phr.type, phr.offset, phr.vaddr, phr.paddr, 
-                     phr.filesz, phr.memsz, phr.flags, phr.align)
+            
+            tbl =   [ 
+                    # name       #fmt     #field name
+                    ['Nr',      '%d',       'index'], 
+                    ['Name',    '%s',       'name'],
+                    ['type',    '0x%x',     'type'],
+                    ['Addr',    '0x%08x',   'addr'],
+                    ['Off',     '0x%08x',   'offset'],
+                    ['Size',    '0x%08x',   'size'],
+                    ['ES',      '0x%x',     'entsize'],
+                    ['flg',     '0x%x',     'flags'],
+                    ['Lk',      '0x%x',     'link'],
+                    ['Inf',     '0x%x',     'info'],
+                    ['Align',   '0x%x',     'addralign'],
+                    ]
 
-
-
-
-
-
+            self.display_iter_obj_formatted(tbl,elfobj.sect_headers)
 
 
 if __name__ == '__main__':
@@ -107,10 +156,10 @@ if __name__ == '__main__':
                              help='Show ELF header')
         optparser.add_option('-l', '--program-headers', dest='phdr',
                              action='store_true',
-                             help='Show Program header')
+                             help='Show Program Table')
         optparser.add_option('-S', '--sections-headers', dest='shdr',
                              action='store_true',
-                             help='Show Program header')
+                             help='Show Sections Table')
         optparser.add_option('-d', '--debug', dest='debug',
                              action='store_true',
                              help='show debug information')
