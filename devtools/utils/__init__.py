@@ -4,7 +4,7 @@ Written by Emilio Monti <emilmont@gmail.com>
 """
 
 
-class IntegerIntervals:
+class IntegerIntervals(object):
     def __init__(self):
         """
         interval: (min, max, value)
@@ -67,7 +67,7 @@ class IntegerIntervals:
                           for (min, max, value) in self.__intervals])
 
 
-class Enum:
+class Enum(object):
     def __init__(self, dict):
         self.dict = dict
         self.name_dict = {}

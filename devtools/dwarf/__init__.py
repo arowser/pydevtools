@@ -23,7 +23,7 @@ class DWARF(ELF, DwarfStream):
         
         # DEBUG STRING TABLE
         debug_str = self.sect_dict['.debug_str']
-        self.debug_str = StringTable(self, debug_str.offset, debug_str.size)
+        self.debug_str = StringTable(self.io, debug_str.offset, debug_str.size)
         
         # DEBUG LINE
         self.stmt = StatementProgramLoader(self)

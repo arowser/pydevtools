@@ -3,13 +3,15 @@ Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
 from StringIO import StringIO
-from devtools.elf.stream import ElfStream, ParseError
+from devtools.elf.stream import ElfStream
+from devtools.elf.enums import ELFCLASS, ELFDATA
+from devtools.elf.exception import *
 
 from devtools.dwarf.enums import DW_FORM
 from devtools.dwarf.expressions import Expression
 
 
-class DwarfStream:
+class DwarfStream(object):
     def __init__(self, addr_size=4):
         self.addr_size = addr_size
         if addr_size == 1:
@@ -22,9 +24,9 @@ class DwarfStream:
             self.read_addr = self.u32
             self.max_addr = 0xFFFFFFFF
         
-        if self.bits == ElfStream.BITS_32:
+        if self.bits == ELFCLASS.ELFCLASS32:
             self.CIE_ID = 0xFFFFFFFF
-        elif self.bits == ElfStream.BITS_64:
+        elif self.bits == ELFCLASS.ELFCLASS64:
             self.CIE_ID = 0xFFFFFFFFFFFFFFFF
         
         # Read methods aliases
@@ -88,7 +90,7 @@ class DwarfStream:
     def read_string(self):
         s = []
         while True:
-            c = self.read(1)
+            c = self.io.read(1)
             if c == '\x00':
                 break
             s.append(c)
@@ -104,10 +106,10 @@ class DwarfStream:
         return self.read_form(self.ULEB128())
     
     def read_block1(self):
-        return self.read(self.u08())
+        return self.io.read(self.u08())
     
     def read_block2(self):
-        return self.read(self.u16())
+        return self.io.read(self.u16())
     
     def read_block4(self):
         return self.read_block(self.u32())
@@ -132,7 +134,7 @@ class DwarfStream:
         return Expression(self, self.u16())
 
 
-class SectionLoader:
+class SectionLoader(object):
     def __init__(self, dwarf, section_name, Entry):
         """
         Loads all the *Entries* of the given *senction_name*
@@ -141,14 +143,14 @@ class SectionLoader:
         self.section_name = section_name
         self.section = dwarf.sect_dict[section_name]
         
-        dwarf.seek(self.section.offset)
+        dwarf.io.seek(self.section.offset)
         
         self.entries = []
         self.entries_dict = {}
         self.offset_index_dict = {}
         i = 0
         while True:
-            offset = dwarf.tell() - self.section.offset
+            offset = dwarf.io.tell() - self.section.offset
             if offset >= self.section.size:
                 break
             
@@ -164,7 +166,7 @@ class SectionLoader:
                 map(lambda x: ' ' if x is None else str(x), self.entries))
 
 
-class SectionCache:
+class SectionCache(object):
     def __init__(self, dwarf, section_name, Entry, offset_attr=None):
         """
         Init a cache for the given *section_name*'s *Entries*
@@ -188,14 +190,14 @@ class SectionCache:
             offset = getattr(key, self.offset_attr)
         
         if offset not in self.__cache:
-            self.dwarf.seek(self.section_start + offset)
+            self.dwarf.io.seek(self.section_start + offset)
             self.__cache[offset] = self.Entry(self.dwarf, key)
         
         return self.__cache[offset]
 
 
 class DwarfString(DwarfStream, ElfStream, StringIO):
-    def __init__(self, buffer, bits=ElfStream.BITS_32, endianness=ElfStream.LITTLE_ENDIAN, addr_size=4):
+    def __init__(self, buffer, bits=ELFCLASS.ELFCLASS32, endianness=ELFDATA.ELFDATA2LSB, addr_size=4):
         StringIO.__init__(self, buffer)
         self.set_bits(bits)
         self.set_endianness(endianness)
@@ -203,7 +205,7 @@ class DwarfString(DwarfStream, ElfStream, StringIO):
 
 
 class DwarfList(DwarfString):
-    def __init__(self, list, bits=ElfStream.BITS_32, endianness=ElfStream.LITTLE_ENDIAN, addr_size=4):
+    def __init__(self, list, bits=ELFCLASS.ELFCLASS32, endianness=ELFDATA.ELFDATA2LSB, addr_size=4):
         buffer = ''.join(map(chr, list))
         DwarfString.__init__(self, buffer, bits, endianness, addr_size)
 
