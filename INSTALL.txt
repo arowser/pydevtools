@@ -1,0 +1,7 @@
+Documentation for package generation can be found at http://peak.telecommunity.com/DevCenter/setuptools#new-and-changed-setup-keywords .
+Quick Access --
+To build egg file issue :
+python setup.py bdist_egg
+
+To install it via easy_install issue :
+easy_install-2.7 dist/DevTools-0.1.0-py2.7.egg 
