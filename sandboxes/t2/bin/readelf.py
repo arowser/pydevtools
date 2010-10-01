@@ -8,7 +8,7 @@ import string
 import os
 import struct
 import sys
-from optparse import OptionParser
+import argparse
 from devtools.elf import *
 
 def transposed(lists, defval=0):
@@ -147,30 +147,29 @@ class ElfViewer(object):
 
 
 if __name__ == '__main__':
+    
     try:
-        usage = 'Usage: %prog [options]\n'\
-                '  Manage Elf files'
-        optparser = OptionParser(usage=usage)
-        optparser.add_option('-e', '--elfheader', dest='elfhdr',
-                             action='store_true',
-                             help='Show ELF header')
-        optparser.add_option('-l', '--program-headers', dest='phdr',
-                             action='store_true',
-                             help='Show Program Table')
-        optparser.add_option('-S', '--sections-headers', dest='shdr',
-                             action='store_true',
-                             help='Show Sections Table')
-        optparser.add_option('-d', '--debug', dest='debug',
-                             action='store_true',
-                             help='show debug information')
-        (options, args) = optparser.parse_args(sys.argv[1:])
-         
+        optparser = argparse.ArgumentParser(description='Read Elf Files.')
+        optparser.add_argument('-e, --elfheader', dest='elfhdr',
+                                 action='store_true',
+                                 help='Show ELF header')
+        optparser.add_argument('-l, --program-headers', dest='phdr',
+                                 action='store_true',
+                                 help='Show Program Table')
+        optparser.add_argument('-S, --sections-headers', dest='shdr',
+                                 action='store_true',
+                                 help='Show Sections Table')
+        optparser.add_argument('-d, --debug', dest='debug',
+                                 action='store_true',
+                                 help='show debug information')
+        optparser.add_argument('filename', type=str,
+                                 help='File to read')
+        args = optparser.parse_args()
         try:
-            infile = open(args[0], 'r') or sys.stdin
+            infile = open(args.filename, 'r')
         except IOError, e:
             raise AssertionError('Ivalid input file: %s' % str(e))
-        
-        
+
         try :
             #build ELF object from infile
             elfobj = ELF(infile)
@@ -180,16 +179,16 @@ if __name__ == '__main__':
             
             line_needed = False
             
-            if options.elfhdr is True :
+            if args.elfhdr is True :
                 elfviewer.display_elf_header()
                 line_needed = True
                 
-            if options.phdr is True :
+            if args.phdr is True :
                 if line_needed is True : print "" 
                 elfviewer.display_program_header()
                 line_needed = True
                 
-            if options.shdr is True :
+            if args.shdr is True :
                 if line_needed is True : print ""
                 elfviewer.display_section_header()
                 
