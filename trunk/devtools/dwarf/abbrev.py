@@ -6,7 +6,7 @@ from devtools.dwarf.stream import SectionCache
 from devtools.dwarf.enums import DW_AT, DW_FORM, DW_TAG
 
 
-class AttribForm:
+class AttribForm(object):
     def __init__(self, name_id, form):
         self.name_id = name_id
         self.form = form
@@ -15,7 +15,7 @@ class AttribForm:
         return '%s: %s' % (DW_AT[self.name_id], DW_FORM[self.form])
 
 
-class Abbrev:
+class Abbrev(object):
     def __init__(self, stream):
         self.index = stream.ULEB128()
         if self.index == 0:

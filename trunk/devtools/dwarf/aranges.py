@@ -5,7 +5,7 @@ Written by Emilio Monti <emilmont@gmail.com>
 from devtools.dwarf.stream import SectionLoader
 
 
-class ARange:
+class ARange(object):
     def __init__(self, dwarf):
         self.address = dwarf.read_addr()
         if self.address == 0:
@@ -16,10 +16,10 @@ class ARange:
         return 'starts at 0x08%x, length of %d' % (self.address, self.length)
 
 
-class ARanges:
+class ARanges(object):
     def __init__(self, dwarf, offset):
         length = dwarf.u32()
-        stop = dwarf.tell() + length
+        stop = dwarf.io.tell() + length
         dwarf.check_version()
         
         self.info_offset = dwarf.u32()
@@ -27,7 +27,7 @@ class ARanges:
         self.segm_size = dwarf.u08()
         
         self.aranges = []
-        while dwarf.tell() < stop:
+        while dwarf.io.tell() < stop:
             ar = ARange(dwarf)
             if ar.address != 0:
                 self.aranges.append(ar)

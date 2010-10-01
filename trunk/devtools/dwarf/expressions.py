@@ -2,11 +2,11 @@
 Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
-from devtools.elf.stream import ParseError
+from devtools.elf.exception import *
 from devtools.dwarf.enums import DW_OP
 
 
-class Instruction:
+class Instruction(object):
     def __init__(self, addr, opcode, operand_1=None, operand_2=None):
         self.addr = addr
         self.opcode = opcode
@@ -76,15 +76,15 @@ DW_OP_OPERANDS = {
 }
 
 
-class Expression:
+class Expression(object):
     def __init__(self, dwarf, length):
         self.instructions = []
         self.addr_index_dict = {}
         
-        start = dwarf.tell()
+        start = dwarf.io.tell()
         i = 0
         while True:
-            addr = dwarf.tell() - start
+            addr = dwarf.io.tell() - start
             if addr >= length:
                 break
             

@@ -7,7 +7,7 @@ from devtools.dwarf.enums import DW_LNS, DW_LNE
 from devtools.dwarf.stream import SectionCache
 
 
-class MachineRegisters:
+class MachineRegisters(object):
     default_is_stmt = False
     
     def __init__(self):
@@ -28,7 +28,7 @@ def statement_information(dwarf, prog):
     regs = MachineRegisters()
     matrix = []
     
-    while dwarf.tell() < prog.stop:
+    while dwarf.io.tell() < prog.stop:
         opcode = dwarf.u08()
         
         # Special Opcodes
@@ -94,7 +94,7 @@ def statement_information(dwarf, prog):
     return matrix
 
 
-class FileEntry:
+class FileEntry(object):
     def __init__(self, dwarf):
         self.name = dwarf.read_string()
         if self.name == '':
@@ -105,10 +105,10 @@ class FileEntry:
         self.length = dwarf.ULEB128()
 
 
-class ProgramPrologue:
+class ProgramPrologue(object):
     def __init__(self, dwarf):
         total_length = dwarf.u32()
-        self.stop = dwarf.tell() + total_length
+        self.stop = dwarf.io.tell() + total_length
         ver = dwarf.check_version(handled=[2, 3])
         dwarf.u32() # prologue_length
         
@@ -137,7 +137,7 @@ class ProgramPrologue:
             self.file_names.append(f)
 
 
-class StatementProgram:
+class StatementProgram(object):
     def __init__(self, dwarf, cu):
         self.cu = cu
         self.prog = ProgramPrologue(dwarf)

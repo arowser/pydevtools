@@ -4,15 +4,18 @@ Written by Emilio Monti <emilmont@gmail.com>
 """
 from array import array
 from devtools.elf.stream import ParseError
-from devtools.elf.enums import SHT, SHF
+from devtools.elf.enums import SHT, SHF, MACHINE, ELFCLASS, ELFDATA
+import os
 
-
-class Header:
+class Header(object):
+    
     def __init__(self, elf):
         elf.constant(4, "\x7fELF")
+        self.elfclass = elf.u08()
+        elf.set_bits(self.elfclass)
         
-        elf.set_bits(elf.u08())
-        elf.set_endianness(elf.u08())
+        self.elfdata = elf.u08()
+        elf.set_endianness(self.elfdata)
         
         self.version = elf.u08()
         elf.skip(9)
@@ -30,9 +33,11 @@ class Header:
         self.sh_entry_size = elf.u16()
         self.sh_count = elf.u16()
         self.shstrndx = elf.u16()
+    
+    
+    
 
-
-class SectionHeader:
+class SectionHeader(object):
     def __init__(self, elf, index):
         self.elf = elf
         self.index = index
@@ -48,24 +53,53 @@ class SectionHeader:
         self.addralign = elf.u32()
         self.entsize = elf.u32()
         
-        self.name = None
-    
+        self._name = None
+        self._data = None
+        
     def is_loadable(self):
         return self.type == SHT.PROGBITS and self.flags & SHF.ALLOC == SHF.ALLOC
     
     def is_execinstr(self):
         return self.flags & SHF.EXECINSTR == SHF.EXECINSTR
-    
-    def get_name(self):
-        if self.name == None:
-            self.name = self.elf.shstrtab[self.name_index]
-        return self.name
-    
-    def get_symbols(self):
+     
+    # name property ############################################
+    @property
+    def name(self):
+        if self._name == None:
+            self._name = self.elf.shstrtab[self.name_index]
+        return self._name
+        
+    @name.setter
+    def name(self,value):
+        pass
+
+    # symbols property ############################################
+    @property
+    def symbols(self):
         return [sym for sym in self.elf.symbols if sym.shndx == self.index]
+    
+    # data property ############################################
+    @property 
+    def data(self):
+        if self._data == None:
+            curr_offset = self.elf.io.tell()
+            self.elf.io.seek(self.offset, os.SEEK_SET)
+            self._data = self.elf.io.read(self.size)
+            self.elf.io.seek(curr_offset, os.SEEK_SET)
+        return self._data
+    
+    @data.setter
+    def data(self, data):
+        if len(data) != len(self.__data) :
+            raise ParseError('Size of new data (%d) mismatch with current '
+                                'size (%d)' % (len(data), self.size))
+        self._data = data
+        curr_offset = self.elf.io.tell()
+        self.elf.io.seek(self.offset, os.SEEK_SET)
+        self.elf.io.read(self.__data)
+        self.elf.io.seek(curr_offset, os.SEEK_SET)
 
-
-class ProgramHeader:
+class ProgramHeader(object):
     def __init__(self, elf, index):
         self.elf = elf
         self.index = index
@@ -80,7 +114,7 @@ class ProgramHeader:
         self.align = elf.u32()
 
 
-class Symbol:
+class Symbol(object):
     LENGTH = 16
     
     def __init__(self, elf, index):
@@ -94,12 +128,18 @@ class Symbol:
         self.other = elf.u08()
         self.shndx = elf.u16()
         
-        self.name = None
-    
-    def get_name(self):
-        if self.name is None:
-            self.name = self.elf.strtab[self.name_index]
-        return self.name
+        self._name = None
+        
+    # name property ############################################
+    @property
+    def name(self):
+        if self._name == None:
+            self._name = self.elf.shstrtab[self.name_index]
+        return self._name
+        
+    @name.setter
+    def name(self,value):
+        pass
     
     def get_bind(self):
         return self.info >> 4
@@ -108,7 +148,7 @@ class Symbol:
         return self.info & 0xF
 
 
-class StringTable:
+class StringTable(object):
     def __init__(self, stream, offset, size):
         self.offset = offset
         stream.seek(offset)
@@ -117,6 +157,7 @@ class StringTable:
     
     def __getitem__(self, key):
         if (key >= self.max):
-            raise ParseError('The required index is out of the table: (0x%x) +%d (max=%d)' % (self.offset, key, self.max))
+            raise ParseError('The required index is out of the table: (0x%x) '
+                        '+%d (max=%d)' % (self.offset, key, self.max))
         i = self.table[key:].index('\x00') + key
         return self.table[key:i].tostring()

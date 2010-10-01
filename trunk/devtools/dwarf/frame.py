@@ -6,7 +6,7 @@ from devtools.dwarf.stream import SectionLoader
 from devtools.dwarf.enums import DW_CFA
 
 
-class CallFrameInstruction:
+class CallFrameInstruction(object):
     def __init__(self, opcode, operand_1=None, operand_2=None):
         self.opcode = opcode
         self.operand_1 = operand_1
@@ -48,8 +48,8 @@ DW_CFA_OPERANDS = {
 def parse_call_frame_instructions(dwarf, length):
     instructions = []
     
-    stop = dwarf.tell() + length
-    while dwarf.tell() < stop:
+    stop = dwarf.io.tell() + length
+    while dwarf.io.tell() < stop:
         opcode = dwarf.u08()
         if opcode == DW_CFA.nop:
             continue
@@ -74,10 +74,10 @@ def parse_call_frame_instructions(dwarf, length):
     return instructions
 
 
-class CallFrameInformation:
+class CallFrameInformation(object):
     def __init__(self, dwarf, offset, length):
         self.offset = offset
-        start = dwarf.tell()
+        start = dwarf.io.tell()
         ver = dwarf.check_version(handled=[1, 3], bytes=1)
         
         self.augmentation = dwarf.read_string()
@@ -85,7 +85,7 @@ class CallFrameInformation:
         self.data_alignment_factor = dwarf.SLEB128()
         self.return_address_register = dwarf.u08()
         
-        instr_length = length - (dwarf.tell() - start)
+        instr_length = length - (dwarf.io.tell() - start)
         self.initial_instructions =  parse_call_frame_instructions(dwarf, instr_length)
     
     def __str__(self):
@@ -98,19 +98,19 @@ class CallFrameInformation:
         return '\n   '.join(s)
 
 
-class FrameTable:
+class FrameTable(object):
     def __init__(self, fde):
         pass
 
 
-class FrameDescriptionEntry:
+class FrameDescriptionEntry(object):
     def __init__(self, dwarf, offset, length, cie):
-        start = dwarf.tell()
+        start = dwarf.io.tell()
         self.cie_p = cie
         self.initial_location = dwarf.read_ref_addr()
         self.address_range = dwarf.read_ref_addr()
         
-        instr_length = length - (dwarf.tell() - start)
+        instr_length = length - (dwarf.io.tell() - start)
         self.instructions =  parse_call_frame_instructions(dwarf, instr_length)
     
     def __str__(self):

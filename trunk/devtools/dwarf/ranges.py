@@ -5,7 +5,7 @@ Written by Emilio Monti <emilmont@gmail.com>
 from devtools.dwarf.stream import SectionCache
 
 
-class Ranges:
+class Ranges(object):
     def __init__(self, dwarf, offset):
         self.entries = []
         
