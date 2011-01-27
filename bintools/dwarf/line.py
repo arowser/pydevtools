@@ -3,8 +3,8 @@ Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
 from copy import copy
-from devtools.dwarf.enums import DW_LNS, DW_LNE
-from devtools.dwarf.stream import SectionCache
+from bintools.dwarf.enums import DW_LNS, DW_LNE
+from bintools.dwarf.stream import SectionCache
 
 
 class MachineRegisters(object):

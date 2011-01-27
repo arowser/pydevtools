@@ -2,7 +2,7 @@ from sys import argv, path
 path.append('..')
 
 from unittest import TestCase, main
-from devtools.dwarf import DWARF
+from bintools.dwarf import DWARF
 
 
 class TestDwarfQuery(TestCase):

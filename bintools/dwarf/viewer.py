@@ -2,8 +2,8 @@
 Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
-from devtools.dwarf import DWARF
-from devtools.dwarf.info import CU, DIE
+from bintools.dwarf import DWARF
+from bintools.dwarf.info import CU, DIE
 import wx
 
 

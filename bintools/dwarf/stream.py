@@ -3,12 +3,12 @@ Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
 from StringIO import StringIO
-from devtools.elf.stream import ElfStream
-from devtools.elf.enums import ELFCLASS, ELFDATA
-from devtools.elf.exception import *
+from bintools.elf.stream import ElfStream
+from bintools.elf.enums import ELFCLASS, ELFDATA
+from bintools.elf.exception import *
 
-from devtools.dwarf.enums import DW_FORM
-from devtools.dwarf.expressions import Expression
+from bintools.dwarf.enums import DW_FORM
+from bintools.dwarf.expressions import Expression
 
 
 class DwarfStream(object):

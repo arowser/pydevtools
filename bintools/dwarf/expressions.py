@@ -2,8 +2,8 @@
 Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
-from devtools.elf.exception import *
-from devtools.dwarf.enums import DW_OP
+from bintools.elf.exception import *
+from bintools.dwarf.enums import DW_OP
 
 
 class Instruction(object):

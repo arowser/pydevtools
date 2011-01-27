@@ -3,7 +3,7 @@ Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
 from os.path import join
-from devtools.dwarf.enums import DW_AT, DW_TAG, DW_LANG, DW_ATE
+from bintools.dwarf.enums import DW_AT, DW_TAG, DW_LANG, DW_ATE
 
 
 class Attrib(object):

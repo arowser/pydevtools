@@ -2,8 +2,8 @@
 Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
-from devtools.dwarf.stream import SectionLoader
-from devtools.dwarf.enums import DW_CFA
+from bintools.dwarf.stream import SectionLoader
+from bintools.dwarf.enums import DW_CFA
 
 
 class CallFrameInstruction(object):

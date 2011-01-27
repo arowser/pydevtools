@@ -2,18 +2,18 @@
 Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
-from devtools.elf import ELF
-from devtools.elf.structs import StringTable
+from bintools.elf import ELF
+from bintools.elf.structs import StringTable
 
-from devtools.dwarf.stream import DwarfStream
-from devtools.dwarf.abbrev import AbbrevLoader
-from devtools.dwarf.info import DebugInfoLoader
-from devtools.dwarf.line import StatementProgramLoader
-from devtools.dwarf.pubnames import PubNamesLoader
-from devtools.dwarf.aranges import ARangesLoader
-from devtools.dwarf.ranges import RangesLoader
-from devtools.dwarf.frame import FrameLoader
-from devtools.dwarf.loc import LocationLoader
+from bintools.dwarf.stream import DwarfStream
+from bintools.dwarf.abbrev import AbbrevLoader
+from bintools.dwarf.info import DebugInfoLoader
+from bintools.dwarf.line import StatementProgramLoader
+from bintools.dwarf.pubnames import PubNamesLoader
+from bintools.dwarf.aranges import ARangesLoader
+from bintools.dwarf.ranges import RangesLoader
+from bintools.dwarf.frame import FrameLoader
+from bintools.dwarf.loc import LocationLoader
 
 
 class DWARF(ELF, DwarfStream):

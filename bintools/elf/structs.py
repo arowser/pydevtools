@@ -3,8 +3,8 @@ Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
 from array import array
-from devtools.elf.stream import ParseError
-from devtools.elf.enums import SHT, SHF, MACHINE, ELFCLASS, ELFDATA
+from bintools.elf.stream import ParseError
+from bintools.elf.enums import SHT, SHF, MACHINE, ELFCLASS, ELFDATA
 import os
 
 class Header(object):
