@@ -2,7 +2,7 @@
 Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
-from devtools.utils import Enum
+from bintools.utils import Enum
 
 
 DW_TAG = {

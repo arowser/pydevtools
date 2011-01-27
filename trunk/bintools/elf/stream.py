@@ -6,8 +6,8 @@ from sys import exit
 from traceback import print_stack
 from struct import unpack
 
-from devtools.elf.exception import *
-from devtools.elf.enums import ELFCLASS, ELFDATA
+from bintools.elf.exception import *
+from bintools.elf.enums import ELFCLASS, ELFDATA
 
 class ElfStream(object):
 

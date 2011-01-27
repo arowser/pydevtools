@@ -2,9 +2,9 @@
 Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
-from devtools.elf.stream import *
-from devtools.elf.structs import *
-from devtools.elf.exception import ParseError
+from bintools.elf.stream import *
+from bintools.elf.structs import *
+from bintools.elf.exception import ParseError
 from io import FileIO
 from cStringIO import StringIO
 import os 

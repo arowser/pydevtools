@@ -2,7 +2,7 @@
 Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
-from devtools.dwarf.stream import SectionLoader
+from bintools.dwarf.stream import SectionLoader
 
 
 class Location(object):

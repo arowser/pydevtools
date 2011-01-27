@@ -2,8 +2,8 @@
 Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
-from devtools.dwarf.stream import SectionCache
-from devtools.dwarf.enums import DW_AT, DW_FORM, DW_TAG
+from bintools.dwarf.stream import SectionCache
+from bintools.dwarf.enums import DW_AT, DW_FORM, DW_TAG
 
 
 class AttribForm(object):

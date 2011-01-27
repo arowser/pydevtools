@@ -11,7 +11,7 @@ import os
 import struct
 import sys
 import argparse
-from devtools.elf import *
+from bintools.elf import *
 
 def transposed(lists, defval=0):
    if not lists: return []

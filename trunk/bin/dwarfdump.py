@@ -2,8 +2,8 @@
 from sys import argv, path
 path.append('..')
 
-from devtools.dwarf import DWARF
-from devtools.utils import benchmark
+from bintools.dwarf import DWARF
+from bintools.utils import benchmark
 
 
 def dwarfdump(file_path):
