@@ -1,10 +1,13 @@
+from sys import argv, path
+path.append('..')
+
 from unittest import TestCase, main
 from devtools.dwarf import DWARF
 
 
 class TestDwarfQuery(TestCase):
     def setUp(self):
-        self.dwarf = DWARF('./test/test')
+        self.dwarf = DWARF('../test/test')
     
     def test_loc_by_addr(self):
         loc = self.dwarf.get_loc_by_addr(0x8048475)

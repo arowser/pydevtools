@@ -2,6 +2,8 @@
 #--------------------------------------------------------------
 # Manage elf files 
 #--------------------------------------------------------------
+from sys import argv, path
+path.append('..')
 
 import StringIO
 import string
