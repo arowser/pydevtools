@@ -373,6 +373,19 @@ class DW_OP(object):
     deref_size = 0x94
     xderef_size = 0x95
     nop = 0x96
+    push_object_address = 0x97
+    call2 = 0x98
+    call4 = 0x99
+    call_ref = 0x9a
+    form_tls_address = 0x9b
+    call_frame_cfa = 0x9c
+    bit_piece = 0x9d
+    implicit_value = 0x9e
+    stack_value = 0x9f
+    lo_user = 0xe0
+    hi_user = 0xff
+
+
 
 DW_OP = Enum({
     0x03: 'addr',
@@ -520,6 +533,17 @@ DW_OP = Enum({
     0x94: 'deref_size',
     0x95: 'xderef_size',
     0x96: 'nop',
+    0x97: 'push_object_address',
+    0x98: 'call2',
+    0x99: 'call4',
+    0x9a: 'call_ref',
+    0x9b: 'form_tls_address',
+    0x9c: 'call_frame_cfa',
+    0x9d: 'bit_piece',
+    0x9e: 'implicit_value',
+    0x9f: 'stack_value',
+    0xe0: 'lo_user',
+    0xff: 'hi_user',
 })
 
 DW_CFA = Enum({
