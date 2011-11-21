@@ -73,6 +73,13 @@ DW_OP_OPERANDS = {
     
     # Special Operations
     DW_OP.piece: ('udata', None),
+
+    # DWARF3/4
+    DW_OP.call2: ('data2', None),
+    DW_OP.call4: ('data4', None),
+    DW_OP.call_ref: ('data4', None),
+    DW_OP.bit_piece: ('udata', 'udata'),
+    DW_OP.implicit_value: ('udata', 'implicit_block'), 
 }
 
 
@@ -97,7 +104,10 @@ class Expression(object):
                 type_1, type_2 = DW_OP_OPERANDS[opcode]
                 operand_1 = dwarf.read_type(type_1)
                 if type_2 is not None:
-                    operand_2 = dwarf.read_type(type_2)
+                    if type_2 == 'implicit_block':
+                        operand_2 = dwarf.read_type('data' + str(operand_1)) 
+                    else:
+                        operand_2 = dwarf.read_type(type_2)
             
             self.instructions.append(Instruction(addr, opcode, operand_1, operand_2))
             self.addr_index_dict[addr] = i
