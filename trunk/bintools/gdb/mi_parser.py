@@ -261,4 +261,4 @@ if __name__ == '__main__':
             attr = getattr(msg, key)
             assert attr == value, '"%s" != "%s"' % (str(attr), str(value))
     
-    print 'OK'
+    print('OK')

@@ -174,6 +174,10 @@ DW_FORM = Enum({
     0x14: 'ref8',
     0x15: 'ref_udata',
     0x16: 'indirect',
+    0x17: 'sec_offset',
+    0x18: 'exprloc',
+    0x19: 'flag_present',
+    0x20: 'ref_sig8',
 })
 
 

@@ -10,7 +10,7 @@ import os
 class Header(object):
     
     def __init__(self, elf):
-        elf.constant(4, "\x7fELF")
+        elf.constant(4, b"\x7fELF")
         self.elfclass = elf.u08()
         elf.set_bits(self.elfclass)
         
@@ -128,15 +128,63 @@ class Symbol(object):
         self.other = elf.u08()
         self.shndx = elf.u16()
         
-        self._name = None
+        self._name    = None
+        self._section = None
+        self._bind    = None
+        self._type    = None
         
     # name property ############################################
     @property
     def name(self):
         if self._name == None:
-            self._name = self.elf.shstrtab[self.name_index]
+            self._name = self.elf.strtab[self.name_index]
         return self._name
         
+    @property
+    def section(self):
+        if self._section == None:
+            special_dict = {
+              0xff00 : 'LORESERVE',
+              0xff00 : 'LOPROC',
+              0xff1f : 'HIPROC',
+              0xfff1 : 'ABS',
+              0xfff2 : 'COMMON',
+              0xffff : 'HIRESERVE',
+            }
+            if self.shndx in special_dict:
+                self._section = special_dict[self.shndx]
+            else:
+                self._section = self.elf.sect_headers[self.shndx].name
+        return self._section
+    
+    @property
+    def bind(self):
+        if self._bind == None:
+            bind_dict = {
+               0 : 'LOCAL',
+               1 : 'GLOBAL',
+               2 : 'WEAK',
+              13 : 'LOPROC',
+              15 : 'HIPROC',
+            }
+            self._bind = bind_dict[self.get_bind()]
+        return self._bind
+
+    @property
+    def type(self):
+        if self._type == None:
+            type_dict = {
+               0 : 'NOTYPE',
+               1 : 'OBJECT',
+               2 : 'FUNC',
+               3 : 'SECTION',
+               4 : 'FILE',
+              13 : 'LOPROC',
+              15 : 'HIPROC',
+            }
+            self._type = type_dict[self.get_type()]
+        return self._type
+
     @name.setter
     def name(self,value):
         pass
@@ -152,12 +200,12 @@ class StringTable(object):
     def __init__(self, stream, offset, size):
         self.offset = offset
         stream.seek(offset)
-        self.table = array('c', stream.read(size))
+        self.table = array('B', stream.read(size))
         self.max = len(self.table)
     
     def __getitem__(self, key):
         if (key >= self.max):
             raise ParseError('The required index is out of the table: (0x%x) '
                         '+%d (max=%d)' % (self.offset, key, self.max))
-        i = self.table[key:].index('\x00') + key
-        return self.table[key:i].tostring()
+        i = self.table[key:].index(0) + key
+        return self.table[key:i].tostring().decode('utf8')

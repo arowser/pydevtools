@@ -1,6 +1,6 @@
 from subprocess import Popen, PIPE, STDOUT
 from threading import Thread
-from Queue import Queue
+from queue import Queue
 from os import read
 from os.path import join
 import select
@@ -77,7 +77,7 @@ class GDB(Thread):
         while True:
             try:
                 select.select([self.gdb.stdout], [], [])
-            except select.error, e:
+            except select.error as e:
                 if e.args[0] == errno.EINTR:
                     continue
                 raise
@@ -118,7 +118,7 @@ class GDB(Thread):
         self.sync_cmd('-gdb-set %s %s' % (key, str(var)))
     
     def set_vars(self, vars):
-        for key, value in vars.iteritems():
+        for key, value in vars.items():
             self.set(key, value)
     
     def init(self):
@@ -141,5 +141,5 @@ if __name__ == '__main__':
     
     gdb.init()
     
-    print 'done'
+    print('done')
     

@@ -39,7 +39,7 @@ class ARanges(object):
                     return True
     
     def __str__(self):
-        return '\n'.join(['CU: %d' % self.info_offset]+map(str, self.aranges))
+        return '\n'.join(['CU: %d' % self.info_offset]+list(map(str, self.aranges)))
 
 
 class ARangesLoader(SectionLoader):

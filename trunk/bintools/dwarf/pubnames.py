@@ -32,7 +32,7 @@ class PubNames(object):
                 self.names[pn.name] = pn
     
     def __str__(self):
-        return '\n'.join(['CU: %d' % self.info_offset]+map(str, self.names.values()))
+        return '\n'.join(['CU: %d' % self.info_offset]+list(map(str, list(self.names.values()))))
 
 
 class PubNamesLoader(SectionLoader):

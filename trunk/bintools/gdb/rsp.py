@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import socket
 from threading import Thread
-from Queue import Queue
+from queue import Queue
 from logging import debug, info, basicConfig, DEBUG
 
 

@@ -295,4 +295,4 @@ if __name__ == '__main__':
     
     assert loc == 8, 'Error evaluating: %s' % location_data
     
-    print 'OK'
+    print('OK')
