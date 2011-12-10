@@ -69,7 +69,7 @@ class Info_Frame(wx.Frame):
     def notify_search(self, evt):
         text = self.search_text.GetValue()
         self.matching_nodes = []
-        for name, node in self.node_names.items():
+        for name, node in list(self.node_names.items()):
             if text in name:
                 self.matching_nodes.append(node)
         
@@ -78,7 +78,7 @@ class Info_Frame(wx.Frame):
             self.tree.SelectItem(self.matching_nodes[0])
             self.tree.EnsureVisible(self.matching_nodes[0])
         else:
-            print 'Unable to find any match of the string: %s'%(text)
+            print('Unable to find any match of the string: %s'%(text))
 
 
 class Viewer:

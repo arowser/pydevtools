@@ -46,7 +46,7 @@ class ElfStream(object):
         self.endianness = endianness
     
     def fatal(self, msg):
-        print '@0x%x FatalError: %s\n' % (self.io.tell(), msg)
+        print('@0x%x FatalError: %s\n' % (self.io.tell(), msg))
         print_stack()
         exit(2)
 
@@ -62,7 +62,7 @@ class ElfStream(object):
         return unpack('b', self.io.read(1))[0]
     
     def bytes(self, n):
-        return map(ord, self.io.read(n))
+        return list(map(ord, self.io.read(n)))
 
     def skip(self, length):
         self.io.seek(length, 1)
@@ -109,7 +109,7 @@ class ElfStream(object):
         entries = []
         if offset != 0:
             self.io.seek(offset)
-            for i in range(n):
+            for i in range(int(n)):
                 entries.append(Entry(self, i))
         return entries
 

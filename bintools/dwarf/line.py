@@ -194,7 +194,7 @@ class StatementProgram(object):
     
     def __str__(self):
         s = ['\n.debug_line: line number info for a single cu']
-        s+= map(self.regs_to_str, self.matrix)
+        s+= list(map(self.regs_to_str, self.matrix))
         return '\n'.join(s)
 
 

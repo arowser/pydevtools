@@ -71,7 +71,7 @@ class Enum(object):
     def __init__(self, dict):
         self.dict = dict
         self.name_dict = {}
-        for key, name in self.dict.iteritems():
+        for key, name in self.dict.items():
             self.name_dict[name] = key
     
     def __getitem__(self, key):
@@ -89,4 +89,4 @@ def benchmark(func, *args, **kargs):
     start = time()
     func(*args, **kargs)
     tot = time() - start
-    print '\n\nTot time: (%.2f)s' % tot
+    print('\n\nTot time: (%.2f)s' % tot)

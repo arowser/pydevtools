@@ -6,7 +6,7 @@ from bintools.elf.stream import *
 from bintools.elf.structs import *
 from bintools.elf.exception import ParseError
 from io import FileIO
-from cStringIO import StringIO
+from io import StringIO
 import os 
 
 

@@ -2,7 +2,7 @@
 Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
-from StringIO import StringIO
+from io import StringIO
 from bintools.elf.stream import ElfStream
 from bintools.elf.enums import ELFCLASS, ELFDATA
 from bintools.elf.exception import *
@@ -90,7 +90,7 @@ class DwarfStream(object):
     def read_string(self):
         s = []
         while True:
-            c = self.io.read(1)
+            c = self.io.read(1).decode('utf8')
             if c == '\x00':
                 break
             s.append(c)
@@ -163,7 +163,7 @@ class SectionLoader(object):
     
     def __str__(self):
         return '\n'.join(['\n%s' % self.section_name] +
-                map(lambda x: ' ' if x is None else str(x), self.entries))
+                [' ' if x is None else str(x) for x in self.entries])
 
 
 class SectionCache(object):
@@ -219,4 +219,4 @@ if __name__ == '__main__':
     test_stream = DwarfList(data)
     assert test_stream.ULEB128() == 624485
     assert test_stream.SLEB128() == -624485
-    print 'OK'
+    print('OK')

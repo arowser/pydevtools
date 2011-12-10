@@ -3,7 +3,7 @@ Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
 from os.path import join
-from bintools.dwarf.enums import DW_AT, DW_TAG, DW_LANG, DW_ATE
+from bintools.dwarf.enums import DW_AT, DW_TAG, DW_LANG, DW_ATE, DW_FORM
 
 
 class Attrib(object):
@@ -25,7 +25,7 @@ class Attrib(object):
             value = '\n' + str(self.dwarf.ranges.get(self.value))
         elif self.name in ['low_pc', 'high_pc']:
             value = '0x%08x' % self.value
-        elif self.name == 'frame_base':
+        elif self.name in ['location', 'data_member_location', 'frame_base'] and type(self.value) == int:
             loc_list = self.dwarf.loc.get_loc_list(self.value)
             value = '\n    ' + '\n    '.join(map(str, loc_list))
         else:
@@ -56,7 +56,8 @@ class DIE(object):
         for attrib_form in abbr.attrib_forms:
             name_id = attrib_form.name_id
             
-            if DW_AT[name_id] in ['location', 'data_member_location']:
+            if DW_AT[name_id] in ['location', 'data_member_location', 'frame_base'] and\
+               DW_FORM[attrib_form.form] != 'data4':
                 value = dwarf.read_expr_block(attrib_form.form)
             else:
                 value = dwarf.read_form(attrib_form.form)
@@ -149,7 +150,7 @@ class CU(object):
         return 'COMPILE_UNIT<header overall offset = %d>' % self.overall_offset
     
     def __str__(self):
-        s = [self.short_description()] + map(str, self.dies)
+        s = [self.short_description()] + list(map(str, self.dies))
         s.append(str(self.dwarf.stmt.get(self)))
         return '\n' + '\n'.join(s)
 
@@ -160,7 +161,6 @@ class DebugInfoLoader(object):
         dwarf.io.seek(debug_info.offset)
         
         overall_offset = 0
-        index = 0
         self.cus = []
         self.cus_dict = {}
         self.cus_files = {}
@@ -172,7 +172,6 @@ class DebugInfoLoader(object):
             overall_offset = dwarf.io.tell() - debug_info.offset
             if overall_offset >= debug_info.size:
                 break
-            index += 1
     
     def get_cu_by_offset(self, offset):
         return self.cus_dict[offset]
@@ -181,4 +180,4 @@ class DebugInfoLoader(object):
         return self.cus_files[filename]
     
     def __str__(self):
-        return '\n'.join(['.debug_info'] + map(str, self.cus))
+        return '\n'.join(['.debug_info'] + list(map(str, self.cus)))
