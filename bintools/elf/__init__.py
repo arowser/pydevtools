@@ -46,14 +46,16 @@ class ELF(ElfStream):
             self.sect_dict[sec.name] = sec
         
         # LOAD STRING TABLE
-        strtab = self.sect_dict['.strtab']
-        self.strtab = StringTable(self.io, strtab.offset, strtab.size)
-        
+        if '.strtab' in self.sect_dict:
+            strtab = self.sect_dict['.strtab']
+            self.strtab = StringTable(self.io, strtab.offset, strtab.size)
+
         # LOAD SYMBOL TABLE
-        symtab = self.sect_dict['.symtab']
-        count = symtab.size / Symbol.LENGTH
-        self.symbols = self.load_entries(symtab.offset, count, Symbol)
-    
+        if '.symtab' in self.sect_dict:
+            symtab = self.sect_dict['.symtab']
+            count = symtab.size / Symbol.LENGTH
+            self.symbols = self.load_entries(symtab.offset, count, Symbol)
+
     def __del__(self):
         if not self.iobj.closed :
             self.iobj.close()
