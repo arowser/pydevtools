@@ -33,6 +33,26 @@ class Header(object):
         self.sh_entry_size = elf.u16()
         self.sh_count = elf.u16()
         self.shstrndx = elf.u16()
+
+    def __str__(self):
+      return ''\
+        + "elfclass      %x\n" % self.elfclass\
+        + "elfdata       %x\n" % self.elfdata\
+        + "version       %x\n" % self.version\
+        + "type          %x\n" % self.type\
+        + "machine       %x\n" % self.machine\
+        + "version       %x\n" % self.version\
+        + "entry         %x\n" % self.entry\
+        + "ph_offset     %x\n" % self.ph_offset\
+        + "sh_offset     %x\n" % self.sh_offset\
+        + "flags         %x\n" % self.flags\
+        + "header_size   %x\n" % self.header_size\
+        + "ph_entry_size %x\n" % self.ph_entry_size\
+        + "ph_count      %x\n" % self.ph_count\
+        + "sh_entry_size %x\n" % self.sh_entry_size\
+        + "sh_count      %x\n" % self.sh_count\
+        + "shstrndx      %x\n" % self.shstrndx\
+
     
     
     
