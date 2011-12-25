@@ -17,12 +17,15 @@ class Instruction(object):
         return (self.addr, self.opcode, self.operand_1, self.operand_2)
     
     def __str__(self):
-        s = ['DW_OP_'+DW_OP[self.opcode]]
+        s = 'DW_OP_' + DW_OP[self.opcode]
         if self.operand_1 is not None:
-            s.append(':%+d' % self.operand_1)
-        if self.operand_2 is not None:
-            s.append(',%+d' % self.operand_2)
-        return ''.join(s)
+          s += '('
+          s += str(self.operand_1)
+          if self.operand_2 is not None:
+            s += ','
+            s += str(self.operand_2)
+          s += ')'
+        return s #''.join(s)
 
 
 DW_OP_OPERANDS = {
@@ -79,7 +82,7 @@ DW_OP_OPERANDS = {
     DW_OP.call4: ('data4', None),
     DW_OP.call_ref: ('data4', None),
     DW_OP.bit_piece: ('udata', 'udata'),
-    DW_OP.implicit_value: ('udata', 'implicit_block'), 
+    DW_OP.implicit_value: ('block', None),
 }
 
 
@@ -104,10 +107,7 @@ class Expression(object):
                 type_1, type_2 = DW_OP_OPERANDS[opcode]
                 operand_1 = dwarf.read_type(type_1)
                 if type_2 is not None:
-                    if type_2 == 'implicit_block':
-                        operand_2 = dwarf.read_type('data' + str(operand_1)) 
-                    else:
-                        operand_2 = dwarf.read_type(type_2)
+                    operand_2 = dwarf.read_type(type_2)
             
             self.instructions.append(Instruction(addr, opcode, operand_1, operand_2))
             self.addr_index_dict[addr] = i
