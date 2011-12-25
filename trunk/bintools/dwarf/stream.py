@@ -77,8 +77,8 @@ class DwarfStream(object):
         
         return result
     
-    def read_type(self, type):
-        return getattr(self, 'read_'+type)()
+    def read_type(self, type_name):
+        return getattr(self, 'read_'+type_name)()
     
     # Read DW_FORM
     def read_form(self, form):
@@ -88,13 +88,12 @@ class DwarfStream(object):
     read_udata = read_ref_udata = ULEB128
     
     def read_string(self):
-        s = []
+        s = bytearray()
         while True:
-            c = self.io.read(1).decode('utf8')
-            if c == '\x00':
-                break
-            s.append(c)
-        return ''.join(s)
+            c = self.io.read(1)
+            if not c[0]: break
+            s[len(s):] = c
+        return s.decode('utf8')
     
     def read_strp(self):
         return self.debug_str[self.u32()]
@@ -112,22 +111,22 @@ class DwarfStream(object):
         return self.io.read(self.u16())
     
     def read_block4(self):
-        return self.read_block(self.u32())
+        return self.io.read(self.u32())
     
     def read_block(self):
-        return self.read_block(self.ULEB128())
+        return self.io.read(self.ULEB128())
     
-    def read_expr_block(self, type):
-        if type == DW_FORM.block1:
+    def read_expr_block(self, form):
+        if   form == DW_FORM.block1:
             length = self.u08()
-        elif type == DW_FORM.block2:
+        elif form == DW_FORM.block2:
             length = self.u16()
-        elif type == DW_FORM.block4:
+        elif form == DW_FORM.block4:
             length = self.u32()
-        elif type == DW_FORM.block:
+        elif form == DW_FORM.block:
             length = self.ULEB128()
         else:
-            raise ParseError("Not an expression block: %s" % DW_FORM[type])
+            raise ParseError("Not an expression block: %s" % DW_FORM[form])
         return Expression(self, length)
     
     def read_expr(self):
