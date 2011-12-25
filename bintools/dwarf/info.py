@@ -7,33 +7,35 @@ from bintools.dwarf.enums import DW_AT, DW_TAG, DW_LANG, DW_ATE, DW_FORM
 
 
 class Attrib(object):
-    def __init__(self, cu, name_id, value):
-        self.dwarf = cu.dwarf
+    def __init__(self, cu, attrib_form):
         self.cu = cu
-        self.name_id = name_id
-        self.name = DW_AT[self.name_id]
-        self.value = value
+        self.name = DW_AT[attrib_form.name_id]
+        self.form = DW_FORM[attrib_form.form]
+        if   self.name in ['location', 'data_member_location', 'frame_base'] and self.form[0:5] == 'block':
+            self.value = self.cu.dwarf.read_expr_block(attrib_form.form)
+        else:
+            self.value = self.cu.dwarf.read_form(attrib_form.form)
     
     def get_value(self):
-        if self.name == 'language':
+        if   self.name == 'language':
             value = DW_LANG[self.value]
         elif self.name == 'encoding':
             value = DW_ATE[self.value]
-        elif self.name == 'decl_file':
+        elif self.name in ['decl_file', 'call_file']:
             value = self.cu.get_file_path(self.value)
         elif self.name == 'ranges':
-            value = '\n' + str(self.dwarf.ranges.get(self.value))
+            value = '\n' + str(self.cu.dwarf.ranges.get(self.value))
         elif self.name in ['low_pc', 'high_pc']:
             value = '0x%08x' % self.value
         elif self.name in ['location', 'data_member_location', 'frame_base'] and type(self.value) == int:
-            loc_list = self.dwarf.loc.get_loc_list(self.value)
+            loc_list = self.cu.dwarf.loc.get_loc_list(self.value)
             value = '\n    ' + '\n    '.join(map(str, loc_list))
         else:
             value = self.value
         return value
     
     def __str__(self):
-        return '%s: %s' % (self.name, self.get_value())
+        return '%s/%s: %s' % (self.name, self.form, self.get_value())
 
 
 class DIE(object):
@@ -54,15 +56,7 @@ class DIE(object):
         self.tag = abbr.tag
         
         for attrib_form in abbr.attrib_forms:
-            name_id = attrib_form.name_id
-            
-            if DW_AT[name_id] in ['location', 'data_member_location', 'frame_base'] and\
-               DW_FORM[attrib_form.form] != 'data4':
-                value = dwarf.read_expr_block(attrib_form.form)
-            else:
-                value = dwarf.read_form(attrib_form.form)
-            
-            a = Attrib(cu, name_id, value)
+            a = Attrib(cu, attrib_form)
             self.attr.append(a)
             self.attr_dict[a.name] = a
         
