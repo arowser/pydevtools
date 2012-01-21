@@ -91,7 +91,7 @@ class DwarfStream(object):
         s = bytearray()
         while True:
             c = self.io.read(1)
-            if not c[0]: break
+            if c[0:1] == b'\x00': break
             s[len(s):] = c
         return s.decode('utf8')
     
