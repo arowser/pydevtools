@@ -35,7 +35,10 @@ class DWARF(ELF, DwarfStream):
         self.info = DebugInfoLoader(self)
         
         # DEBUG PUBNAMES
-        self.pubnames = PubNamesLoader(self)
+        if '.debug_pubnames' in self.sect_dict:
+          self.pubnames = PubNamesLoader(self)
+        else:
+          self.pubnames = None
         
         # DEBUG ARANGES
         self.aranges = ARangesLoader(self)

@@ -229,6 +229,7 @@ class DW_LNE(object):
     end_sequence = 1
     set_address = 2
     define_file = 3
+    set_discriminator = 4
 
 
 class DW_OP(object):
@@ -581,6 +582,7 @@ DW_CFA = Enum({
     # SGI/MIPS specific
     0x1d: 'MIPS_advance_loc8',
     # GNU extensions
+    0x24: 'GNU_unknown0', #???
     0x2d: 'GNU_window_save',
     0x2e: 'GNU_args_size',
     0x2f: 'GNU_negative_offset_extended',

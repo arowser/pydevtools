@@ -57,8 +57,11 @@ def statement_information(dwarf, prog):
             elif extended_op == DW_LNE.define_file:
                 prog.file_names.append(FileEntry(dwarf))
             
+            elif extended_op == DW_LNE.set_discriminator:
+                dwarf.ULEB128() # TODO?
+            
             else:
-                assert False, 'Extended Opcode not implemented'
+                assert False, 'Extended Opcode not implemented: %d' % extended_op
             
         # Standard Opcodes
         elif opcode == DW_LNS.copy:
