@@ -50,7 +50,10 @@ class DWARF(ELF, DwarfStream):
         self.ranges = RangesLoader(self)
         
         # DEBUG FRAME
-        self.frame = FrameLoader(self)
+        if '.debug_frame' in self.sect_dict:
+            self.frame = FrameLoader(self)
+        else:
+            self.frame = None
         
         # DEBUG LOC
         self.loc = LocationLoader(self)
