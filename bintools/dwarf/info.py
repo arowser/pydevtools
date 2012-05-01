@@ -17,6 +17,15 @@ class Attrib(object):
             self.value = self.cu.dwarf.read_form(attrib_form.form)
     
     def get_value(self):
+        if   self.name == 'ranges':
+            value = self.cu.dwarf.ranges.get(self.value)
+        elif self.name in ['location', 'data_member_location', 'frame_base'] and type(self.value) == int:
+            value = self.cu.dwarf.loc.get_loc_list(self.value)
+        else:
+            value = self.value
+        return value
+    
+    def get_str(self):
         if   self.name == 'language':
             value = DW_LANG[self.value]
         elif self.name == 'encoding':
@@ -35,7 +44,7 @@ class Attrib(object):
         return value
     
     def __str__(self):
-        return '%s/%s: %s' % (self.name, self.form, self.get_value())
+        return '%s/%s: %s' % (self.name, self.form, self.get_str())
 
 
 class DIE(object):
