@@ -8,7 +8,7 @@ from bintools.utils import benchmark
 
 def dwarfdump(file_path):
     dwarf = DWARF(file_path)
-    print dwarf
+    print(dwarf)
 
 
 if __name__ == '__main__':
