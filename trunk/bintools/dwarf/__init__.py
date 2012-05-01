@@ -3,6 +3,7 @@ Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
 from bintools.elf import ELF
+from bintools.elf.enums import ELFCLASS
 from bintools.elf.structs import StringTable
 
 from bintools.dwarf.stream import DwarfStream
@@ -19,6 +20,8 @@ from bintools.dwarf.loc import LocationLoader
 class DWARF(ELF, DwarfStream):
     def __init__(self, path, addr_size=4):
         ELF.__init__(self, path)
+        if self.bits == ELFCLASS.ELFCLASS64:
+            addr_size = 8
         DwarfStream.__init__(self, addr_size)
         
         # DEBUG STRING TABLE

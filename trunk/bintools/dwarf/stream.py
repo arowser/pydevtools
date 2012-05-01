@@ -24,6 +24,9 @@ class DwarfStream(object):
             self.read_addr = self.u32
             self.max_addr = 0xFFFFFFFF
         
+        elif addr_size == 8:
+            self.read_addr = self.u64
+            self.max_addr = 0xFFFFFFFFFFFFFFFF
         if self.bits == ELFCLASS.ELFCLASS32:
             self.CIE_ID = 0xFFFFFFFF
         elif self.bits == ELFCLASS.ELFCLASS64:
