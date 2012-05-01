@@ -23,9 +23,14 @@ class Header(object):
         self.type = elf.u16()
         self.machine = elf.u16()
         self.version = elf.u32()
-        self.entry = elf.u32()
-        self.ph_offset = elf.u32()
-        self.sh_offset = elf.u32()
+        if self.elfclass == ELFCLASS.ELFCLASS32:
+            self.entry = elf.u32()
+            self.ph_offset = elf.u32()
+            self.sh_offset = elf.u32()
+        elif self.elfclass == ELFCLASS.ELFCLASS64:
+            self.entry = elf.u64()
+            self.ph_offset = elf.u64()
+            self.sh_offset = elf.u64()
         self.flags = elf.u32()
         self.header_size = elf.u16()
         self.ph_entry_size = elf.u16()
@@ -62,16 +67,28 @@ class SectionHeader(object):
         self.elf = elf
         self.index = index
         
-        self.name_index = elf.u32()
-        self.type = elf.u32()
-        self.flags = elf.u32()
-        self.addr = elf.u32()
-        self.offset = elf.u32()
-        self.size = elf.u32()
-        self.link = elf.u32()
-        self.info = elf.u32()
-        self.addralign = elf.u32()
-        self.entsize = elf.u32()
+        if elf.bits == ELFCLASS.ELFCLASS32:
+            self.name_index = elf.u32()
+            self.type = elf.u32()
+            self.flags = elf.u32()
+            self.addr = elf.u32()
+            self.offset = elf.u32()
+            self.size = elf.u32()
+            self.link = elf.u32()
+            self.info = elf.u32()
+            self.addralign = elf.u32()
+            self.entsize = elf.u32()
+        elif elf.bits == ELFCLASS.ELFCLASS64:
+            self.name_index = elf.u32()
+            self.type = elf.u32()
+            self.flags = elf.u64()
+            self.addr = elf.u64()
+            self.offset = elf.u64()
+            self.size = elf.u64()
+            self.link = elf.u32()
+            self.info = elf.u32()
+            self.addralign = elf.u64()
+            self.entsize = elf.u64()
         
         self._name = None
         self._data = None
@@ -124,14 +141,24 @@ class ProgramHeader(object):
         self.elf = elf
         self.index = index
         
-        self.type = elf.u32()
-        self.offset = elf.u32()
-        self.vaddr = elf.u32()
-        self.paddr = elf.u32()
-        self.filesz = elf.u32()
-        self.memsz = elf.u32()
-        self.flags = elf.u32()
-        self.align = elf.u32()
+        if elf.bits == ELFCLASS.ELFCLASS32:
+            self.type = elf.u32()
+            self.offset = elf.u32()
+            self.vaddr = elf.u32()
+            self.paddr = elf.u32()
+            self.filesz = elf.u32()
+            self.memsz = elf.u32()
+            self.flags = elf.u32()
+            self.align = elf.u32()
+        elif elf.bits == ELFCLASS.ELFCLASS64:
+            self.type = elf.u32()
+            self.flags = elf.u32()
+            self.offset = elf.u64()
+            self.vaddr = elf.u64()
+            self.paddr = elf.u64()
+            self.filesz = elf.u64()
+            self.memsz = elf.u64()
+            self.align = elf.u64()
 
 
 class Symbol(object):
