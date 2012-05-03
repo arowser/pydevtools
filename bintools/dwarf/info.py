@@ -2,7 +2,7 @@
 Copyright (c) 2010, Cambridge Silicon Radio Ltd.
 Written by Emilio Monti <emilmont@gmail.com>
 """
-from os.path import join
+from os.path import join, dirname
 from bintools.dwarf.enums import DW_AT, DW_TAG, DW_LANG, DW_ATE, DW_FORM
 
 
@@ -143,8 +143,13 @@ class CU(object):
         
         self.compile_unit = self.dies[0]
         self.stmt_list = self.compile_unit.attr_dict['stmt_list'].value
-        self.comp_dir = self.compile_unit.attr_dict['comp_dir'].value
-        self.name = self.compile_unit.attr_dict['name'].value
+        if 'comd_dir' in self.compile_unit.attr_dict:
+            self.comp_dir = self.compile_unit.attr_dict['comp_dir'].value
+            self.name = self.compile_unit.attr_dict['name'].value
+        else:
+            # Assume that self.name contains a full path name
+            self.name = self.compile_unit.attr_dict['name'].value
+            self.comp_dir = dirname(self.name)
     
     def get_file_path(self, i):
         dir, name = self.dwarf.stmt.get(self).get_file_path(i)
