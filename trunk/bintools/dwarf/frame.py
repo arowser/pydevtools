@@ -70,6 +70,8 @@ def parse_call_frame_instructions(dwarf, length):
                 operand_1 = dwarf.read_type(type_1)
                 if type_2 is not None:
                     operand_2 = dwarf.read_type(type_2)
+            else:
+                print("unknown opcode: %02x" % opcode)
         
         instructions.append(CallFrameInstruction(opcode, operand_1, operand_2))
     
