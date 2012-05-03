@@ -20,7 +20,7 @@ class Info_Frame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.notify_search, self.search_button)
         
         # Tree
-        self.tree = wx.TreeCtrl(self, size=(520,800))
+        self.tree = wx.TreeCtrl(self, size=(520,200))
         self.root = self.tree.AddRoot(".debug_info")
         for cu in dwarf.info.cus:
             cu_node = self.add_node(self.root, cu.short_description())
@@ -34,12 +34,12 @@ class Info_Frame(wx.Frame):
         # Layout
         self.hbox = wx.BoxSizer()
         self.hbox.Add(self.search_text  , proportion=1, border=0)
-        self.hbox.Add(self.search_button, proportion =0, border=0)
+        self.hbox.Add(self.search_button, proportion=0, border=0)
         
         self.vbox= wx.BoxSizer(wx.VERTICAL)
-        self.vbox.Add(self.hbox    , proportion=0, border=1, flag=wx.EXPAND)
-        self.vbox.Add(self.tree    , proportion=1, border=1, flag=wx.EXPAND)
-        self.vbox.Add(self.die_text, proportion=0, border=1, flag=wx.EXPAND)
+        self.vbox.Add(self.hbox    , proportion=0, border=1, flag=wx.EXPAND|wx.ALL)
+        self.vbox.Add(self.tree    , proportion=1, border=1, flag=wx.EXPAND|wx.ALL)
+        self.vbox.Add(self.die_text, proportion=0, border=1, flag=wx.EXPAND|wx.ALL)
         self.SetSizer(self.vbox)
         
         self.tree.ExpandAll()
