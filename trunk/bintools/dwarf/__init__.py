@@ -56,7 +56,10 @@ class DWARF(ELF, DwarfStream):
             self.frame = None
         
         # DEBUG LOC
-        self.loc = LocationLoader(self)
+        if '.debug_loc' in self.sect_dict:
+            self.loc = LocationLoader(self)
+        else:
+            self.loc = None
     
     # Lookup by location
     def get_addr_by_loc(self, filename, line):

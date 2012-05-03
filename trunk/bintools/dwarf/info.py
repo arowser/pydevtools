@@ -20,7 +20,10 @@ class Attrib(object):
         if   self.name == 'ranges':
             value = self.cu.dwarf.ranges.get(self.value)
         elif self.name in ['location', 'data_member_location', 'frame_base'] and type(self.value) == int:
-            value = self.cu.dwarf.loc.get_loc_list(self.value)
+            if self.cu.dwarf.loc is None:
+                value = self.value	# should be a constant value
+            else:
+                value = self.cu.dwarf.loc.get_loc_list(self.value)
         else:
             value = self.value
         return value
@@ -37,8 +40,11 @@ class Attrib(object):
         elif self.name in ['low_pc', 'high_pc']:
             value = '0x%08x' % self.value
         elif self.name in ['location', 'data_member_location', 'frame_base'] and type(self.value) == int:
-            loc_list = self.cu.dwarf.loc.get_loc_list(self.value)
-            value = '\n    ' + '\n    '.join(map(str, loc_list))
+            if self.cu.dwarf.loc is None:
+                value = self.value	# should be a constant value
+            else:
+                loc_list = self.cu.dwarf.loc.get_loc_list(self.value)
+                value = '\n    ' + '\n    '.join(map(str, loc_list))
         else:
             value = self.value
         return value
