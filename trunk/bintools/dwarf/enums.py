@@ -149,6 +149,10 @@ DW_AT = {
     0x66: 'elemental',
     0x67: 'pure',
     0x68: 'recursive',
+
+    0x2000: 'lo_user',
+    0x2007: 'MIPS_linkage_name',
+    0x3fff: 'hi_user',
 }
 
 
