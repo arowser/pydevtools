@@ -42,6 +42,8 @@ DW_CFA_OPERANDS = {
     DW_CFA.val_offset        : ('udata', 'udata'),
     DW_CFA.val_offset_sf     : ('udata', 'sdata'),
     DW_CFA.val_expression    : ('udata', 'block'),
+    DW_CFA.GNU_args_size     : ('udata', None),
+    DW_CFA.GNU_negative_offset_extended : ('udata', 'udata'),
 }
 
 
