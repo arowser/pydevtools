@@ -20,7 +20,10 @@ class Instruction(object):
         s = 'DW_OP_' + DW_OP[self.opcode]
         if self.operand_1 is not None:
           s += '('
-          s += str(self.operand_1)
+          if DW_OP[self.opcode] == 'addr':
+              s += str(hex(self.operand_1))
+          else:
+              s += str(self.operand_1)
           if self.operand_2 is not None:
             s += ','
             s += str(self.operand_2)
